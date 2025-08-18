@@ -1,0 +1,33 @@
+# ----------------------
+# Maven
+# ----------------------
+*/target/*
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/timing.properties
+*.class
+
+# ----------------------
+# VSCode
+# ----------------------
+.vscode/
+.history/
+*.code-workspace
+
+# ----------------------
+# Logs e temporários
+# ----------------------
+*.log
+*.tmp
+*.swp
+*.swo
+*.bak
+*.jar
+*.lst
+*~
+hs_err_pid*
+
+# ----------------------
+# Sistema Operacional
+# ----------------------
+.DS_Store
+Thumbs.db
