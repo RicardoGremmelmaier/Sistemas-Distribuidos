@@ -1,4 +1,4 @@
-package com.tutorial;
+package exemplos.routing.src.main.java.com.tutorial;
 
 import com.rabbitmq.client.*;
 
