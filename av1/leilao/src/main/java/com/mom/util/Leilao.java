@@ -5,8 +5,8 @@ import java.time.*;
 public class Leilao {
     private final int leilao_id;
     private final String descricao;
-    private LocalDateTime data_inicio;
-    private LocalDateTime data_fim;
+    private final LocalDateTime data_inicio;
+    private final LocalDateTime data_fim;
 
     private static int id_counter = 1;
 
