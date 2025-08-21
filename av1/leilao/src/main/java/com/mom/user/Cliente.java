@@ -1,24 +1,40 @@
 package com.mom.user;
 
 import com.rabbitmq.client.*;
+import java.io.*;
+import java.security.*;
 
 public class Cliente {
-    private final String cliente_id;
-    private final String chave_publica;
-    private final String chave_privada;
+    private final int cliente_id;
+    private final PublicKey chave_publica;
+    private final PrivateKey chave_privada;
 
-    public Cliente(String cliente_id, String chave_publica, String chave_privada) {
-        this.cliente_id = cliente_id;
-        this.chave_publica = chave_publica;
-        this.chave_privada = chave_privada;
+    private static int id_counter = 1;
+
+    public Cliente() {
+        this.cliente_id = id_counter++;
+
+        try {
+            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+            SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+            keyGen.initialize(2048, random);
+            KeyPair pair = keyGen.generateKeyPair();
+            this.chave_publica = pair.getPublic();
+            this.chave_privada = pair.getPrivate();
+
+            // Debug para criação de cliente, apagar após teste
+            System.out.println("Cliente criado com ID: " + cliente_id);
+            System.out.println("Chave pública: " + chave_publica);
+            System.out.println("Chave privada: " + chave_privada);
+            // Debug para criação de cliente, apagar após teste
+        }
+        catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Erro ao inicializar o cliente", e);
+        }
     }
 
-    public String getClienteId() {
+    public int getClienteId() {
         return cliente_id;
-    }
-
-    public String getChavePublica() {
-        return chave_publica;
     }
 
     void publicarLance(){
