@@ -39,7 +39,7 @@ public class Cliente {
         return cliente_id;
     }
 
-    void salvarChavePublica(){
+    public void salvarChavePublica(){
         try(FileOutputStream fos = new FileOutputStream("chaves.txt", true);
         OutputStreamWriter osw = new OutputStreamWriter(fos)) {
             osw.write("" + cliente_id + "; " + chave_publica.getEncoded() + "\n");
@@ -48,21 +48,13 @@ public class Cliente {
         }
     }
 
-    void publicarLance(){
+    public void publicarLance(int leilao_id, double valor){
         try {
             this.assinador = Signature.getInstance("SHA256withRSA");
             this.assinador.initSign(chave_privada);
 
         } catch (Exception e) {
             throw new RuntimeException("Erro ao publicar lance", e);
-        }
-    }
-
-    void salvarAssinatura(byte[] realSig) {
-        try (FileOutputStream sigfos = new FileOutputStream("sig")) {
-            sigfos.write(realSig);
-        } catch (IOException e) {
-            throw new RuntimeException("Erro ao salvar assinatura", e);
         }
     }
 

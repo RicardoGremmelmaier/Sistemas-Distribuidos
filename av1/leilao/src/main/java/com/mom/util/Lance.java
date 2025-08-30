@@ -4,14 +4,13 @@ public class Lance {
     private final int leilao_id;
     private final int cliente_id;
     private final double valor;
-    private final String hash;
+    private final byte[] assinatura;
 
-
-    public Lance(int leilao_id, int cliente_id, double valor, String hash) {
+    public Lance(int leilao_id, int cliente_id, double valor, byte[] assinatura) {
         this.leilao_id = leilao_id;
         this.cliente_id = cliente_id;
         this.valor = valor;
-        this.hash = hash;
+        this.assinatura = assinatura;
     }
 
     public int getLeilaoId() {
@@ -26,8 +25,8 @@ public class Lance {
         return valor;
     }
 
-    public String getHash() {
-        return hash;
+    public byte[] getAssinatura() {
+        return assinatura;
     }
 
 }
