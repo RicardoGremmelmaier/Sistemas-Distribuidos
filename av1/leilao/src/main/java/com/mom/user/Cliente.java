@@ -23,12 +23,6 @@ public class Cliente {
             KeyPair pair = keyGen.generateKeyPair();
             this.chave_publica = pair.getPublic();
             this.chave_privada = pair.getPrivate();
-
-            // Debug para criação de cliente, apagar após teste
-            System.out.println("Cliente criado com ID: " + cliente_id);
-            System.out.println("Chave pública: " + chave_publica.getEncoded());
-            System.out.println("Chave privada: " + chave_privada.getEncoded());
-            // Debug para criação de cliente, apagar após teste
         }
         catch (Exception e) {
             throw new RuntimeException("Erro ao inicializar o cliente", e);
@@ -40,8 +34,14 @@ public class Cliente {
     }
 
     public void salvarChavePublica(){
-        try(FileOutputStream fos = new FileOutputStream("chaves.txt", true);
-        OutputStreamWriter osw = new OutputStreamWriter(fos)) {
+        String path = System.getProperty("user.dir") 
+                        + File.separator + "av1" 
+                        + File.separator + "leilao"
+                        + File.separator + "src"
+                        + File.separator + "public-keys"
+                        + File.separator + "chaves.txt";
+        try(FileOutputStream fos = new FileOutputStream(path, true);
+            OutputStreamWriter osw = new OutputStreamWriter(fos)) {
             osw.write("" + cliente_id + "; " + chave_publica.getEncoded() + "\n");
         } catch (IOException e) {
             throw new RuntimeException("Erro ao salvar chave pública", e);
