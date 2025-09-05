@@ -4,13 +4,12 @@ public class Lance {
     private final int leilao_id;
     private final int cliente_id;
     private final double valor;
-    private final byte[] assinatura;
+    private byte[] assinatura;
 
-    public Lance(int leilao_id, int cliente_id, double valor, byte[] assinatura) {
+    public Lance(int leilao_id, int cliente_id, double valor) {
         this.leilao_id = leilao_id;
         this.cliente_id = cliente_id;
         this.valor = valor;
-        this.assinatura = assinatura;
     }
 
     public int getLeilaoId() {
@@ -27,6 +26,10 @@ public class Lance {
 
     public byte[] getAssinatura() {
         return assinatura;
+    }
+
+    public void setAssinatura(byte[] assinatura) {
+        this.assinatura = assinatura;
     }
 
 }

@@ -1,28 +1,34 @@
 package com.mom.user;
 
+import com.mom.util.Lance;
+
 import com.rabbitmq.client.*;
 import com.mom.util.Lance;
 import java.io.*;
 import java.security.*;
 
 public class Cliente {
-    private final int cliente_id;
-    private final PublicKey chave_publica;
-    private final PrivateKey chave_privada;
+    private final int clienteId;
+    private final PublicKey chavePublica;
+    private final PrivateKey chavePrivada;
     private Signature assinador;
 
     private static int id_counter = 1;
 
     public Cliente() {
-        this.cliente_id = id_counter++;
+        this.clienteId = id_counter++;
 
         try {
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
             SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
             keyGen.initialize(2048, random);
             KeyPair pair = keyGen.generateKeyPair();
-            this.chave_publica = pair.getPublic();
-            this.chave_privada = pair.getPrivate();
+            this.chavePublica = pair.getPublic();
+            this.chavePrivada = pair.getPrivate();
+
+            if(this.chavePrivada != null && this.chavePublica != null) {
+                salvarChavePublica();
+            }
         }
         catch (Exception e) {
             throw new RuntimeException("Erro ao inicializar o cliente", e);
@@ -30,32 +36,38 @@ public class Cliente {
     }
 
     public int getClienteId() {
-        return cliente_id;
+        return clienteId;
     }
 
     public void salvarChavePublica(){
         String path = System.getProperty("user.dir") 
-                        + File.separator + "av1" 
-                        + File.separator + "leilao"
-                        + File.separator + "src"
                         + File.separator + "public-keys"
-                        + File.separator + "chaves.txt";
-        try(FileOutputStream fos = new FileOutputStream(path, true);
-            OutputStreamWriter osw = new OutputStreamWriter(fos)) {
-            osw.write("" + cliente_id + "; " + chave_publica.getEncoded() + "\n");
+                        + File.separator + "cliente_" + clienteId + ".txt";
+        byte[] key = this.chavePublica.getEncoded();
+        try(FileOutputStream fos = new FileOutputStream(path)) {
+            fos.write(key);
         } catch (IOException e) {
             throw new RuntimeException("Erro ao salvar chave pública", e);
         }
     }
 
-    public void publicarLance(int leilao_id, double valor){
+    public void publicarLance(Lance lance){
+
+    }
+
+    public void assinarLance(Lance lance){
         try {
             this.assinador = Signature.getInstance("SHA256withRSA");
-            this.assinador.initSign(chave_privada);
-
+            this.assinador.initSign(chavePrivada);
+            this.assinador.update(Double.toString(lance.getValor()).getBytes("UTF-8"));
+            lance.setAssinatura(this.assinador.sign());
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao publicar lance", e);
+            throw new RuntimeException("Erro ao assinar lance", e);
         }
+    }
+
+    public PublicKey getPublicKey() {
+        return chavePublica;
     }
 
 }
