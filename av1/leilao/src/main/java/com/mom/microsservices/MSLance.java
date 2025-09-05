@@ -16,7 +16,6 @@ import com.mom.util.Lance;
 public class MSLance {
     private Signature assinador;
 
-
     public boolean validarLance(Lance lance){
         int client_id = lance.getClienteId();
         PublicKey chavePublica;
