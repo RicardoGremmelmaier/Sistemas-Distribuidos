@@ -29,7 +29,7 @@ public class MSLance {
         try {
             this.assinador = Signature.getInstance("SHA256withRSA");
             assinador.initVerify(chavePublica);
-            this.assinador.update(Double.toString(lance.getValor()).getBytes("UTF-8"));
+            this.assinador.update(lance.toString().getBytes("UTF-8"));
 
             return this.assinador.verify(lance.getAssinatura());
         } catch (Exception e) {

@@ -32,4 +32,13 @@ public class Lance {
         this.assinatura = assinatura;
     }
 
+    @Override
+    public String toString() {
+        return "Lance{" +
+                "leilao_id=" + leilao_id +
+                ", cliente_id=" + cliente_id +
+                ", valor=" + valor +
+                '}';
+    }
+
 }

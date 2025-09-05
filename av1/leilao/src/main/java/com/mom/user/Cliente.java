@@ -59,7 +59,7 @@ public class Cliente {
         try {
             this.assinador = Signature.getInstance("SHA256withRSA");
             this.assinador.initSign(chavePrivada);
-            this.assinador.update(Double.toString(lance.getValor()).getBytes("UTF-8"));
+            this.assinador.update(lance.toString().getBytes("UTF-8"));
             lance.setAssinatura(this.assinador.sign());
         } catch (Exception e) {
             throw new RuntimeException("Erro ao assinar lance", e);
