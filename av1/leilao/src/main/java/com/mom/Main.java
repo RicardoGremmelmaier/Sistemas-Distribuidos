@@ -10,6 +10,7 @@ import java.util.Timer;
 public class Main {
     public static void main(String[] args) {
         var leilao = new Leilao("Leilão de Teste");
+        System.out.println(leilao.toString());
         System.out.println("Leilão criado: " + leilao.getLeilaoId() + " - " + leilao.getDescricao());
 
         var leilao2 = new Leilao("Leilão de Teste 2");

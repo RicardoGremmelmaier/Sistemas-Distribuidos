@@ -10,13 +10,30 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.List;
 
 import com.mom.util.Lance;
 
 public class MSLance {
     private Signature assinador;
+    private List<Integer> leiloesAtivos;
+    private List<Integer> leiloesEncerrados;
 
-    public boolean validarLance(Lance lance){
+    public void validarLance(Lance lance){
+        if(!leiloesAtivos.contains(lance.getLeilaoId())) {
+            throw new RuntimeException("Lance inválido: leilão não está ativo.");
+        }
+
+        if (leiloesEncerrados.contains(lance.getLeilaoId())) {
+            throw new RuntimeException("Lance inválido: leilão já encerrado.");
+        }
+
+        if(!validarAssinatura(lance)) {
+            throw new RuntimeException("Lance inválido: assinatura não confere.");
+        }
+    }
+
+    public boolean validarAssinatura(Lance lance){
         int client_id = lance.getClienteId();
         PublicKey chavePublica;
         try {
@@ -32,7 +49,7 @@ public class MSLance {
 
             return this.assinador.verify(lance.getAssinatura());
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao verificar lance", e);
+            throw new RuntimeException("Erro ao verificar assinatura", e);
         }
     }
 
