@@ -5,23 +5,23 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Leilao extends TimerTask{
-    private final int leilao_id;
+    private final int leilaoId;
     private final String descricao;
-    private final LocalDateTime data_inicio;
-    private final LocalDateTime data_fim;
-    private boolean isFinished;
+    private final LocalDateTime dataInicio;
+    private final LocalDateTime dataFim;
+    private boolean finalizado;
 
     private static int id_counter = 1;
 
     public Leilao(String descricao) {
-        this.leilao_id = id_counter++;
+        this.leilaoId = id_counter++;
         this.descricao = descricao;
-        this.data_inicio = LocalDateTime.now();
-        this.data_fim = data_inicio.plusMinutes(2);
-        this.isFinished = false;
+        this.dataInicio = LocalDateTime.now();
+        this.dataFim = dataInicio.plusMinutes(2);
+        this.finalizado = false;
 
         Timer timer = new Timer();
-        timer.schedule(this, Duration.between(this.data_inicio, this.data_fim).toMillis());
+        timer.schedule(this, Duration.between(this.dataInicio, this.dataFim).toMillis());
     }
 
     @Override
@@ -30,7 +30,7 @@ public class Leilao extends TimerTask{
     }
 
     public int getLeilaoId() {
-        return leilao_id;
+        return leilaoId;
     }
 
     public String getDescricao() {
@@ -38,20 +38,31 @@ public class Leilao extends TimerTask{
     }
 
     public LocalDateTime getDataInicio() {
-        return data_inicio;
+        return dataInicio;
     }
 
     public LocalDateTime getDataFim() {
-        return data_fim;
+        return dataFim;
     }
 
-    public boolean isFinished() {
-        return isFinished;
+    public boolean isFinalizado() {
+        return finalizado;
     }
 
     public void finalizarLeilao() {
-        this.isFinished = true;
-        System.out.println("Leilão " + this.leilao_id + " finalizado.");
+        this.finalizado = true;
+        System.out.println("Leilão " + this.leilaoId + " finalizado.");
     } 
+
+    @Override
+    public String toString() {
+        return "Leilão{" +
+                "leilaoId=" + leilaoId +
+                ", descricao='" + descricao + '\'' +
+                ", dataInicio=" + dataInicio +
+                ", dataFim=" + dataFim +
+                ", finalizado=" + finalizado +
+                '}';
+    }
 
 }
