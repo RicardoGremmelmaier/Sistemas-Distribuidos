@@ -34,10 +34,10 @@ public class Lance {
 
     @Override
     public String toString() {
-        return "Lance{" +
-                "leilaoId=" + leilaoId +
-                ", clienteId=" + clienteId +
-                ", valor=" + valor +
+        return "{" +
+                "\"leilaoId\":" + leilaoId +
+                ", \"clienteId\":" + clienteId +
+                ", \"valor\":" + valor +
                 '}';
     }
 

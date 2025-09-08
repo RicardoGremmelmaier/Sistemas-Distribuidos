@@ -41,7 +41,6 @@ public class Leilao{
 
     public void finalizarLeilao() {
         this.finalizado = true;
-        System.out.println("Leilão " + this.leilaoId + " finalizado.");
     }
 
 
