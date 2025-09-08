@@ -2,8 +2,11 @@ package com.mom.user;
 
 import com.mom.util.Lance;
 
+
 import com.rabbitmq.client.*;
 import com.mom.util.Lance;
+import com.mom.rabbit.*;
+
 import java.io.*;
 import java.security.*;
 
@@ -12,6 +15,8 @@ public class Cliente {
     private final PublicKey chavePublica;
     private final PrivateKey chavePrivada;
     private Signature assinador;
+
+    private final String routingLeilaoIniciado = "leilao.iniciado";
 
     private static int id_counter = 1;
 
@@ -33,6 +38,7 @@ public class Cliente {
         catch (Exception e) {
             throw new RuntimeException("Erro ao inicializar o cliente", e);
         }
+
     }
 
     public int getClienteId() {

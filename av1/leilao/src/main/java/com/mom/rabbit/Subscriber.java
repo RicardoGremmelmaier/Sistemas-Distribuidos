@@ -8,10 +8,10 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
-public abstract class AbstractSubscriber {
+public class Subscriber {
     protected Channel channel;
     protected String exchangeName = "leilao";
-    public AbstractSubscriber(List<String> routingKeys) throws Exception {
+    public Subscriber(List<String> routingKeys) throws Exception {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
         Connection connection = factory.newConnection();
@@ -30,5 +30,7 @@ public abstract class AbstractSubscriber {
         }, consumerTag -> {});
     }
 
-    protected abstract void handleMessage(String message);
+    protected void handleMessage(String message) {
+        System.out.println("[SUB] Mensagem recebida: " + message);
+    }
 }

@@ -7,11 +7,11 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
-public abstract class AbstractPublisher {
+public class Publisher {
     protected Channel channel;
     protected String exchangeName = "leilao";
 
-    public AbstractPublisher() throws Exception {
+    public Publisher() throws Exception {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
         try (Connection connection = factory.newConnection();
