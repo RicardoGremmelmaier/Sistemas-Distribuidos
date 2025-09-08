@@ -52,13 +52,15 @@ public class MSLeilao{
     }
 
     public void finalizarLeilao(Leilao leilao) {
+        leilao.finalizarLeilao();
+
         try {
-            publisher.publish(routingLeilaoFinalizado, "Leilão " + leilao.getLeilaoId() + " finalizado.");
+            publisher.publish(routingLeilaoFinalizado, leilao.toString());
         } catch (Exception e) {
             System.err.println("Erro ao publicar mensagem de leilão finalizado: " + e.getMessage());
         }
-        
-        leilao.finalizarLeilao();
+
+        System.out.println("Leilão " + leilao.getLeilaoId() + " finalizado.");
     }
 
     public static void main(String[] args){
