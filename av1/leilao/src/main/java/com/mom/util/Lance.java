@@ -1,23 +1,23 @@
 package com.mom.util;
 
 public class Lance {
-    private final int leilao_id;
-    private final int cliente_id;
+    private final int leilaoId;
+    private final int clienteId;
     private final double valor;
     private byte[] assinatura;
 
-    public Lance(int leilao_id, int cliente_id, double valor) {
-        this.leilao_id = leilao_id;
-        this.cliente_id = cliente_id;
+    public Lance(int leilaoId, int clienteId, double valor) {
+        this.leilaoId = leilaoId;
+        this.clienteId = clienteId;
         this.valor = valor;
     }
 
     public int getLeilaoId() {
-        return leilao_id;
+        return leilaoId;
     }
 
     public int getClienteId() {
-        return cliente_id;
+        return clienteId;
     }
 
     public double getValor() {
@@ -35,8 +35,8 @@ public class Lance {
     @Override
     public String toString() {
         return "Lance{" +
-                "leilao_id=" + leilao_id +
-                ", cliente_id=" + cliente_id +
+                "leilaoId=" + leilaoId +
+                ", clienteId=" + clienteId +
                 ", valor=" + valor +
                 '}';
     }

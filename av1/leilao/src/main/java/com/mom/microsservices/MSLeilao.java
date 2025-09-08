@@ -32,7 +32,7 @@ public class MSLeilao{
         System.out.println("Leilão " + leilao.getLeilaoId() + " iniciado.");
 
         try {
-            publisher.publish(routingLeilaoIniciado, "Leilão " + leilao.getLeilaoId() + " iniciado: " + descricao);
+            publisher.publish(routingLeilaoIniciado, leilao.toString());
         } catch (Exception e) {
             System.err.println("Erro ao publicar mensagem de leilão iniciado: " + e.getMessage());
         }

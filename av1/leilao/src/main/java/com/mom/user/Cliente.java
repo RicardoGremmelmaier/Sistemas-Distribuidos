@@ -1,10 +1,6 @@
 package com.mom.user;
 
 import com.mom.util.Lance;
-
-
-import com.rabbitmq.client.*;
-import com.mom.util.Lance;
 import com.mom.rabbit.*;
 
 import java.io.*;
@@ -12,16 +8,21 @@ import java.security.*;
 
 public class Cliente {
     private final int clienteId;
+
     private final PublicKey chavePublica;
     private final PrivateKey chavePrivada;
     private Signature assinador;
 
-    private final String routingLeilaoIniciado = "leilao.iniciado";
+    private Publisher publisher;
+    private Subscriber subscriber;
 
-    private static int id_counter = 1;
+    private final String routingLeilaoIniciado = "leilao.iniciado";
+    private final String routingLanceRealizado = "lance.realizado";
+
+    private static int idCounter = 1;
 
     public Cliente() {
-        this.clienteId = id_counter++;
+        this.clienteId = idCounter++;
 
         try {
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
@@ -36,7 +37,24 @@ public class Cliente {
             }
         }
         catch (Exception e) {
-            throw new RuntimeException("Erro ao inicializar o cliente", e);
+            throw new RuntimeException("Erro ao inicializar a chave pública e privada", e);
+        }
+
+        try {
+            this.publisher = new Publisher();
+        } 
+        catch (Exception e) {
+            throw new RuntimeException("Erro ao inicializar publisher", e);
+        }
+
+        try{
+            this.subscriber = new Subscriber(
+                java.util.Arrays.asList(routingLeilaoIniciado),
+                this::handleMensagem
+            );
+        } 
+        catch (Exception e) {
+            throw new RuntimeException("Erro ao inicializar subscriber", e);
         }
 
     }
@@ -72,8 +90,8 @@ public class Cliente {
         }
     }
 
-    public PublicKey getPublicKey() {
-        return chavePublica;
+    public void handleMensagem(String msg) {
+        System.out.println(msg);
     }
 
 }

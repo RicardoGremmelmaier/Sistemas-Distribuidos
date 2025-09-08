@@ -47,12 +47,12 @@ public class Leilao{
 
     @Override
     public String toString() {
-        return "Leilão{" +
-                "leilaoId=" + leilaoId +
-                ", descricao='" + descricao + '\'' +
-                ", dataInicio=" + dataInicio +
-                ", dataFim=" + dataFim +
-                ", finalizado=" + finalizado +
+        return "{" +
+                "\"leilaoId\":" + leilaoId +
+                ", \"descricao\":\"" + descricao + "\"" +
+                ", \"dataInicio\":\"" + dataInicio + "\"" +
+                ", \"dataFim\":\"" + dataFim + "\"" +
+                ", \"finalizado\":" + finalizado +
                 '}';
     }
 
