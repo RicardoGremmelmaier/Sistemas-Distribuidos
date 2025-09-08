@@ -1,7 +1,7 @@
 package com.mom.rabbit;
 
-import java.io.IOException;
 import java.util.List;
+import java.util.function.Consumer;
 
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
@@ -9,28 +9,31 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
 public class Subscriber {
-    protected Channel channel;
-    protected String exchangeName = "leilao";
-    public Subscriber(List<String> routingKeys) throws Exception {
+    private Connection connection;
+    private Channel channel;
+    private String exchangeName = "leilao";
+    private String queueName;
+    
+    public Subscriber(List<String> routingKeys, Consumer<String> handler) throws Exception {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
-        Connection connection = factory.newConnection();
+        this.connection = factory.newConnection();
         this.channel = connection.createChannel();
-        channel.exchangeDeclare(exchangeName, "direct", true);
-        String queueName = channel.queueDeclare().getQueue();
+        this.channel.exchangeDeclare(exchangeName, BuiltinExchangeType.DIRECT);
+        this.queueName = channel.queueDeclare().getQueue();
 
         for (String key : routingKeys) {
             channel.queueBind(queueName, exchangeName, key);
         }
 
-        channel.basicConsume(queueName, true, (consumerTag, delivery) -> {
-            String message = new String(delivery.getBody(), "UTF-8");
-            System.out.println("[SUB] Recebido '" + delivery.getEnvelope().getRoutingKey() + "':'" + message + "'");
-            handleMessage(message);
-        }, consumerTag -> {});
+        channel.basicConsume(queueName, true, (tag, delivery) -> {
+            String msg = new String(delivery.getBody(), "UTF-8");
+            handler.accept("[" + delivery.getEnvelope().getRoutingKey() + "] " + msg);
+        }, tag -> {});
     }
 
-    protected void handleMessage(String message) {
-        System.out.println("[SUB] Mensagem recebida: " + message);
+    public void queueBind(String routingKey) throws Exception {
+        channel.queueBind(queueName, exchangeName, routingKey);
     }
+
 }

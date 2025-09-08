@@ -8,19 +8,19 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
 public class Publisher {
-    protected Channel channel;
-    protected String exchangeName = "leilao";
+    private Connection connection;
+    private Channel channel;
+    private String exchangeName = "leilao";
 
     public Publisher() throws Exception {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
-        try (Connection connection = factory.newConnection();
-             Channel channel = connection.createChannel()) {
-            channel.exchangeDeclare(exchangeName, BuiltinExchangeType.DIRECT);
-        }
+        this.connection = factory.newConnection();
+        this.channel = connection.createChannel();
+        this.channel.exchangeDeclare(exchangeName, BuiltinExchangeType.DIRECT);
     }
 
-    protected void publish(String routingKey, String message) throws IOException {
+    public void publish(String routingKey, String message) throws IOException {
         channel.basicPublish(exchangeName, routingKey, null, message.getBytes());
         System.out.println("[PUB] Enviado '" + routingKey + "':'" + message + "'");
     }
