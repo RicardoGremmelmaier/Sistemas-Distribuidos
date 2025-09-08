@@ -38,6 +38,7 @@ public class Lance {
                 "\"leilaoId\":" + leilaoId +
                 ", \"clienteId\":" + clienteId +
                 ", \"valor\":" + valor +
+                ", \"assinatura\":\"" + (assinatura != null ? java.util.Base64.getEncoder().encodeToString(assinatura) : null) + "\"" + 
                 '}';
     }
 
