@@ -1,32 +1,22 @@
 package com.mom.util;
 
 import java.time.*;
-import java.util.Timer;
-import java.util.TimerTask;
 
-public class Leilao extends TimerTask{
+public class Leilao{
     private final int leilaoId;
     private final String descricao;
     private final LocalDateTime dataInicio;
     private final LocalDateTime dataFim;
     private boolean finalizado;
 
-    private static int id_counter = 1;
+    private static int idCounter = 1;
 
     public Leilao(String descricao) {
-        this.leilaoId = id_counter++;
+        this.leilaoId = idCounter++;
         this.descricao = descricao;
         this.dataInicio = LocalDateTime.now();
         this.dataFim = dataInicio.plusMinutes(2);
         this.finalizado = false;
-
-        Timer timer = new Timer();
-        timer.schedule(this, Duration.between(this.dataInicio, this.dataFim).toMillis());
-    }
-
-    @Override
-    public void run() {
-        finalizarLeilao();
     }
 
     public int getLeilaoId() {
@@ -52,7 +42,8 @@ public class Leilao extends TimerTask{
     public void finalizarLeilao() {
         this.finalizado = true;
         System.out.println("Leilão " + this.leilaoId + " finalizado.");
-    } 
+    }
+
 
     @Override
     public String toString() {
