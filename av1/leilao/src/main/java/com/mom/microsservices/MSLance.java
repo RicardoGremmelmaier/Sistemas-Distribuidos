@@ -14,6 +14,8 @@ import com.mom.rabbit.Publisher;
 import com.mom.rabbit.Subscriber;
 import com.mom.util.Lance;
 
+import org.json.JSONObject;
+
 public class MSLance {
     private Signature assinador;
 
@@ -46,6 +48,9 @@ public class MSLance {
         catch (Exception e) {
             throw new RuntimeException("Erro ao inicializar subscriber", e);
         }
+
+        leiloesAtivos = new java.util.ArrayList<>();
+        maioresLances = new java.util.HashMap<>();
     }
 
 
@@ -136,32 +141,39 @@ public class MSLance {
     }
 
     public void handleLanceRealizado(String msg) {
+        JSONObject json = new JSONObject(msg);
+        int leilaoId = json.getInt("leilaoId");
+        int clienteId = json.getInt("clienteId");
+        double valor = json.getDouble("valor");
+        byte[] assinatura = json.getString("assinatura").getBytes();
 
-        // int leilaoId = Integer.parseInt(msg.split(",")[0].split(":")[1].trim());
-        // int clienteId = Integer.parseInt(msg.split(",")[1].split(":")[1].trim());
-        // double valor = Double.parseDouble(msg.split(",")[2].split(":")[1].trim());
-
-        // Lance lance = new Lance(leilaoId, clienteId, valor);
-        // validarLance(lance);
+        Lance lance = new Lance(leilaoId, clienteId, valor);
+        lance.setAssinatura(assinatura);
+        
+        validarLance(lance);
     }
 
     public void handleLeilaoIniciado(String msg) {
-        int leilaoId = Integer.parseInt(msg.split(":")[1].split(",")[0].trim());
+        JSONObject json = new JSONObject(msg);
+        int leilaoId = json.getInt("leilaoId");
         this.leiloesAtivos.add(leilaoId);
     }
 
     public void handleLeilaoFinalizado(String msg) {
-        int leilaoId = Integer.parseInt(msg.split(":")[1].split(",")[0].trim());
+        JSONObject json = new JSONObject(msg);
+        int leilaoId = json.getInt("leilaoId");
 
         Lance lanceVencedor = null;
-        for (Map.Entry<Double, Lance> entry : maioresLances.entrySet()) {
+        for (Map.Entry<Double, Lance> entry : this.maioresLances.entrySet()) {
             if (entry.getValue().getLeilaoId() == leilaoId) {
                 lanceVencedor = entry.getValue();
                 break;
             }
         }
 
-        leiloesAtivos.remove(leilaoId);
+        leiloesAtivos = leiloesAtivos.stream()
+                        .filter(id -> id != leilaoId)
+                        .toList();
 
         if (lanceVencedor != null) {
             try {
@@ -172,11 +184,10 @@ public class MSLance {
         } else {
             System.out.println("Nenhum lance válido foi recebido para o leilão " + leilaoId);
         }   
-
     }
 
     public void handleRoutingKeyInvalida(String msg) {
-        System.out.println("[SUB] Roteamento inválido: '" + msg + "'");
+        System.out.println("Roteamento inválido: '" + msg + "'");
         System.out.println("Ignorando mensagem...");
     }
 
