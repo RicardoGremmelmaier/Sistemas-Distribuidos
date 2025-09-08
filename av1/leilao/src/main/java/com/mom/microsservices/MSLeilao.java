@@ -19,15 +19,15 @@ public class MSLeilao{
     private final String routingLeilaoFinalizado = "leilao.finalizado";
 
     public MSLeilao() {
-            try {
+        try {
             this.publisher = new Publisher();
         } catch (Exception e) {
             throw new RuntimeException("Erro ao inicializar publisher", e);
         }
     }
 
-    public void criarLeilao(String descricao) {
-        Leilao leilao = new Leilao(descricao);
+    public void criarLeilao(String descricao, int additionalMinutes) {
+        Leilao leilao = new Leilao(descricao, additionalMinutes);
         leiloes.put(leilao.getLeilaoId(), leilao);
         System.out.println("Leilão " + leilao.getLeilaoId() + " iniciado.");
 
@@ -60,4 +60,13 @@ public class MSLeilao{
         
         leilao.finalizarLeilao();
     }
+
+    public static void main(String[] args){
+        MSLeilao msLeilao = new MSLeilao();
+
+        msLeilao.criarLeilao("saveiro 2009 1.6 bruxa", 1);
+        msLeilao.criarLeilao("novilha nelore 18 arroba", 2);
+
+    }
+
 }
