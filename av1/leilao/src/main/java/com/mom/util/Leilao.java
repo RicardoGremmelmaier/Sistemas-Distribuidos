@@ -11,11 +11,11 @@ public class Leilao{
 
     private static int idCounter = 1;
 
-    public Leilao(String descricao) {
+    public Leilao(String descricao, int additionalMinutes) {
         this.leilaoId = idCounter++;
         this.descricao = descricao;
         this.dataInicio = LocalDateTime.now();
-        this.dataFim = dataInicio.plusMinutes(2);
+        this.dataFim = dataInicio.plusMinutes(additionalMinutes);
         this.finalizado = false;
     }
 
