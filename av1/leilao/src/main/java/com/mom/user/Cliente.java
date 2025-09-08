@@ -14,10 +14,10 @@ public class Cliente {
     private Signature assinador;
 
     private Publisher publisher;
-    private Subscriber subscriber;
-
-    private final String routingLeilaoIniciado = "leilao.iniciado";
     private final String routingLanceRealizado = "lance.realizado";
+    
+    private Subscriber subscriber;
+    private final String routingLeilaoIniciado = "leilao.iniciado";
 
     private static int idCounter = 1;
 
@@ -92,6 +92,10 @@ public class Cliente {
 
     public void handleMensagem(String msg) {
         System.out.println(msg);
+    }
+
+    public static void main(String[] args) {
+        Cliente cliente = new Cliente();
     }
 
 }
