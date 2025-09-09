@@ -1,10 +1,15 @@
 package com.mom.user;
 
 import com.mom.util.Lance;
-import com.mom.rabbit.*;
+import com.mom.rabbit.Publisher;
+import com.mom.rabbit.Subscriber;
 
 import java.io.*;
 import java.security.*;
+import java.util.Scanner;
+import java.util.UUID;
+
+import org.json.JSONObject;
 
 public class Cliente {
     private final int clienteId;
@@ -19,11 +24,10 @@ public class Cliente {
     private Subscriber subscriber;
     private final String routingLeilaoIniciado = "leilao.iniciado";
 
-    private static int idCounter = 1;
+    private static final Scanner scanner = new Scanner(System.in);
 
     public Cliente() {
-        this.clienteId = idCounter++;
-
+        this.clienteId = Math.abs(UUID.randomUUID().hashCode());
         try {
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
             SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
@@ -75,8 +79,38 @@ public class Cliente {
         }
     }
 
-    public void publicarLance(Lance lance){
+    public void salvarAssinatura(Lance lance){
+        String path = System.getProperty("user.dir") 
+                        + File.separator + "assinaturas"
+                        + File.separator + "cliente_" + clienteId + "_leilao_" + lance.getLeilaoId() + ".txt";
+        byte[] assinatura = lance.getAssinatura();
+        try(FileOutputStream fos = new FileOutputStream(path)) {
+            fos.write(assinatura);
+        } catch (IOException e) {
+            throw new RuntimeException("Erro ao salvar assinatura", e);
+        }
+    }
 
+    public void publicarLance(Lance lance){
+        assinarLance(lance);
+        salvarAssinatura(lance);
+
+        try {
+            this.publisher.publish(routingLanceRealizado, lance.toString());
+        } 
+        catch (Exception e) {
+            throw new RuntimeException("Erro ao publicar lance", e);
+        }
+
+        try{
+            this.subscriber.queueBind("leilao." + lance.getLeilaoId() + ".lance");
+            this.subscriber.queueBind("leilao." + lance.getLeilaoId() + ".vencedor");
+        } 
+        catch (Exception e) {
+            throw new RuntimeException("Erro ao vincular fila do leilão", e);
+        }
+
+        System.out.println("Lance de " + lance.getValor() + " publicado para o leilão " + lance.getLeilaoId());
     }
 
     public void assinarLance(Lance lance){
