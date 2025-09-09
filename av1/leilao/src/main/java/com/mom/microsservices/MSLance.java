@@ -7,6 +7,7 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +21,7 @@ public class MSLance {
     private Signature assinador;
 
     private List<Integer> leiloesAtivos = new java.util.ArrayList<>();
-    private Map<Double, Lance> maioresLances =new java.util.HashMap<>();
+    private Map<Integer, Lance> maioresLances = new HashMap<>();
 
     private Publisher publisher;
     private final String routingLanceValidado = "lance.validado";
@@ -62,24 +63,16 @@ public class MSLance {
             throw new RuntimeException("Lance inválido: assinatura não confere.");
         }
 
-        Lance maiorLance = null;
-        for (Map.Entry<Double, Lance> entry : maioresLances.entrySet()) {
-            if (entry.getValue().getLeilaoId() == lance.getLeilaoId()) {
-                maiorLance = entry.getValue();
-                break;
-            }
-        }
-        if (maiorLance == null || lance.getValor() > maiorLance.getValor()) {
-            maioresLances.put(lance.getValor(), lance);
+        Lance maiorLance = maioresLances.get(lance.getLeilaoId());
 
+        if (maiorLance == null || lance.getValor() > maiorLance.getValor()) {
+            maioresLances.put(lance.getLeilaoId(), lance);
             try {
                 this.publisher.publish(routingLanceValidado, lance.toString());
             } catch (Exception e) {
                 throw new RuntimeException("Erro ao publicar lance validado", e);
             }
-               
         }
-
     }
 
     public boolean validarAssinatura(Lance lance){
@@ -172,17 +165,11 @@ public class MSLance {
         JSONObject json = new JSONObject(msg);
         int leilaoId = json.getInt("leilaoId");
 
-        Lance lanceVencedor = null;
-        for (Map.Entry<Double, Lance> entry : this.maioresLances.entrySet()) {
-            if (entry.getValue().getLeilaoId() == leilaoId) {
-                lanceVencedor = entry.getValue();
-                break;
-            }
-        }
-
         leiloesAtivos = leiloesAtivos.stream()
                         .filter(id -> id != leilaoId)
                         .toList();
+
+        Lance lanceVencedor = maioresLances.get(leilaoId);
 
         if (lanceVencedor != null) {
             try {
@@ -200,6 +187,7 @@ public class MSLance {
             }
         }
     }
+
 
     public void handleRoutingKeyInvalida(String msg) {
         System.out.println("Roteamento inválido: '" + msg + "'");
