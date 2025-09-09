@@ -46,11 +46,13 @@ public class Leilao{
 
     @Override
     public String toString() {
+        int durationMinutes = (int) Duration.between(dataInicio, dataFim).toMinutes();
         return "{" +
                 "\"leilaoId\":" + leilaoId +
                 ", \"descricao\":\"" + descricao + "\"" +
                 ", \"dataInicio\":\"" + dataInicio + "\"" +
                 ", \"dataFim\":\"" + dataFim + "\"" +
+                ", \"durationMinutes\":" + durationMinutes +
                 ", \"finalizado\":" + finalizado +
                 '}';
     }
