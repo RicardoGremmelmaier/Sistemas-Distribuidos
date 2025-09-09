@@ -1,6 +1,7 @@
 package com.mom.microsservices;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -26,30 +27,38 @@ public class MSLeilao{
         }
     }
 
-    public void criarLeilao(String descricao, int additionalMinutes) {
-        Leilao leilao = new Leilao(descricao, additionalMinutes);
-        leiloes.put(leilao.getLeilaoId(), leilao);
-        System.out.println("Leilão " + leilao.getLeilaoId() + " iniciado.");
+public void criarLeilao(String descricao, int additionalMinutes) {
+    Leilao leilao = new Leilao(descricao, additionalMinutes);
+    leiloes.put(leilao.getLeilaoId(), leilao);
 
-        try {
-            publisher.publish(routingLeilaoIniciado, leilao.toString());
-        } catch (Exception e) {
-            System.err.println("Erro ao publicar mensagem de leilão iniciado: " + e.getMessage());
-        }
+    Timer timer = new Timer();
 
-        Timer timer = new Timer();
-        long delay = Duration.between(leilao.getDataInicio(), leilao.getDataFim()).toMillis();
+    long delayInicio = Duration.between(LocalDateTime.now(), leilao.getDataInicio()).toMillis();
 
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                finalizarLeilao(leilao);
+    timer.schedule(new TimerTask() {
+        @Override
+        public void run() {
+            System.out.println("Leilão " + leilao.getLeilaoId() + " iniciado.");
+
+            try {
+                publisher.publish(routingLeilaoIniciado, leilao.toString());
+            } catch (Exception e) {
+                System.err.println("Erro ao publicar mensagem de leilão iniciado: " + e.getMessage());
             }
-        }, delay);
 
-        timers.put(leilao.getLeilaoId(), timer);
+            long delayFim = Duration.between(leilao.getDataInicio(), leilao.getDataFim()).toMillis();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    finalizarLeilao(leilao);
+                }
+            }, delayFim);
+        }
+    }, delayInicio);
 
-    }
+    timers.put(leilao.getLeilaoId(), timer);
+}
+
 
     public void finalizarLeilao(Leilao leilao) {
         leilao.finalizarLeilao();
@@ -66,8 +75,8 @@ public class MSLeilao{
     public static void main(String[] args){
         MSLeilao msLeilao = new MSLeilao();
 
-        msLeilao.criarLeilao("saveiro 2009 1.6 bruxa", 1);
-        msLeilao.criarLeilao("novilha nelore 18 arroba", 2);
+        msLeilao.criarLeilao("Leilao 1", 1);
+        msLeilao.criarLeilao("Leilao 2", 1);
 
     }
 

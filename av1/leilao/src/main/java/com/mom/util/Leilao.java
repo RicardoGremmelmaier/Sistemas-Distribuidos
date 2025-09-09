@@ -1,7 +1,6 @@
 package com.mom.util;
 
 import java.time.*;
-import java.util.Random;
 
 public class Leilao{
     private final int leilaoId;
@@ -15,7 +14,7 @@ public class Leilao{
     public Leilao(String descricao, int additionalMinutes) {
         this.leilaoId = idCounter++;
         this.descricao = descricao;
-        this.dataInicio = LocalDateTime.now().plusSeconds(new Random().nextInt(30));
+        this.dataInicio = LocalDateTime.now().plusSeconds(additionalMinutes);
         this.dataFim = dataInicio.plusMinutes(additionalMinutes);
         this.finalizado = false;
     }
