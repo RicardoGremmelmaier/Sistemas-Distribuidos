@@ -19,8 +19,8 @@ import org.json.JSONObject;
 public class MSLance {
     private Signature assinador;
 
-    private List<Integer> leiloesAtivos;
-    private Map<Double, Lance> maioresLances;
+    private List<Integer> leiloesAtivos = new java.util.ArrayList<>();
+    private Map<Double, Lance> maioresLances =new java.util.HashMap<>();
 
     private Publisher publisher;
     private final String routingLanceValidado = "lance.validado";
@@ -48,18 +48,17 @@ public class MSLance {
         catch (Exception e) {
             throw new RuntimeException("Erro ao inicializar subscriber", e);
         }
-
-        leiloesAtivos = new java.util.ArrayList<>();
-        maioresLances = new java.util.HashMap<>();
     }
 
 
     public void validarLance(Lance lance){
         if(!leiloesAtivos.contains(lance.getLeilaoId())) {
+            System.out.println("Leilão inativo");
             throw new RuntimeException("Lance inválido: leilão não está ativo.");
         }
 
         if(!validarAssinatura(lance)) {
+            System.out.println("Assinatura inválida");
             throw new RuntimeException("Lance inválido: assinatura não confere.");
         }
 
@@ -84,12 +83,20 @@ public class MSLance {
     }
 
     public boolean validarAssinatura(Lance lance){
-        int client_id = lance.getClienteId();
+        int clientId = lance.getClienteId();
+        int leilaoId = lance.getLeilaoId();    
         PublicKey chavePublica;
+        byte[] assinatura;
         try {
-            chavePublica = carregarChavePublica(client_id);
+            chavePublica = carregarChavePublica(clientId);
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao carregar chave pública do cliente " + client_id, e);
+            throw new RuntimeException("Erro ao carregar chave pública do cliente " + clientId, e);
+        }
+
+        try {
+            assinatura = carregarAssinatura(clientId, leilaoId);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao carregar assinatura do cliente " + clientId + " para o leilão " + leilaoId, e);
         }
 
         try {
@@ -97,7 +104,7 @@ public class MSLance {
             assinador.initVerify(chavePublica);
             this.assinador.update(lance.toString().getBytes("UTF-8"));
 
-            return this.assinador.verify(lance.getAssinatura());
+            return this.assinador.verify(assinatura);
         } catch (Exception e) {
             throw new RuntimeException("Erro ao verificar assinatura", e);
         }
@@ -112,6 +119,15 @@ public class MSLance {
         X509EncodedKeySpec pubKeySpec = new X509EncodedKeySpec(encKey);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         return keyFactory.generatePublic(pubKeySpec);
+    }
+
+    public byte[] carregarAssinatura(int clienteId, int leilaoId) throws Exception {
+        String path = System.getProperty("user.dir") 
+                        + File.separator + "assinaturas"
+                        + File.separator + "cliente_" + clienteId + "_leilao_" + leilaoId + ".txt";
+
+        byte [] assinatura = Files.readAllBytes(Paths.get(path));
+        return assinatura;
     }
 
     public void handleMensagem(String msg) {
@@ -140,11 +156,9 @@ public class MSLance {
         int leilaoId = json.getInt("leilaoId");
         int clienteId = json.getInt("clienteId");
         double valor = json.getDouble("valor");
-        byte[] assinatura = json.getString("assinatura").getBytes();
 
         Lance lance = new Lance(leilaoId, clienteId, valor);
-        lance.setAssinatura(assinatura);
-        
+
         validarLance(lance);
     }
 
@@ -177,8 +191,14 @@ public class MSLance {
                 throw new RuntimeException("Erro ao publicar leilão vencedor", e);
             }
         } else {
-            System.out.println("Nenhum lance válido foi recebido para o leilão " + leilaoId);
-        }   
+            String msgNone = "Nenhum lance válido foi recebido para o leilão " + leilaoId;
+            System.out.println(msgNone);
+            try {
+                this.publisher.publish(routingLeilaoVencedor, msgNone);
+            } catch (Exception e) {
+                throw new RuntimeException("Erro ao publicar leilão vencedor", e);
+            }
+        }
     }
 
     public void handleRoutingKeyInvalida(String msg) {
