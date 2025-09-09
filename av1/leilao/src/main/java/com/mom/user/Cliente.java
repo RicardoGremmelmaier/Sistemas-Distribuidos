@@ -125,7 +125,78 @@ public class Cliente {
     }
 
     public void handleMensagem(String msg) {
+        String routingKey = msg.split("]")[0].substring(1);
+        String body = msg.split("]")[1].trim();
+
+        if (routingKey.equals(routingLeilaoIniciado)) {
+            handleLeilaoIniciado(body);
+        } else if (routingKey.contains(".vencedor")) {
+            handleLeilaoFinalizado(body);
+        } else if (routingKey.contains(".lance")) {
+            handleLance(body);
+        } else {
+            handleRoutingKeyInvalida(routingKey);
+        }
+
+    }
+
+    public void handleLeilaoIniciado(String msg) {
+        JSONObject json = new JSONObject(msg);
+
+        int leilaoId = json.getInt("leilaoId");
+        String descricao = json.getString("descricao");
+        int durationMinutes = json.getInt("durationMinutes");
+        System.out.println("Leilão iniciado com ID " + leilaoId + " com descrição: " + descricao + " e duração de " + durationMinutes + " minuto(s).");
+        System.out.println("Deseja participar? (s/n)");
+
+        String resposta = scanner.nextLine().trim().toLowerCase();
+
+        if(resposta.equals("s")){
+            System.out.println("Digite o valor do lance:");
+            double valor = Double.parseDouble(scanner.nextLine().trim());
+
+            Lance lance = new Lance(leilaoId, this.clienteId, valor);
+            publicarLance(lance);
+        } else {
+            System.out.println("Você optou por não participar do leilão " + leilaoId);
+        }
+
+    }
+
+    public void handleLeilaoFinalizado(String msg) {
         System.out.println(msg);
+    }
+
+    public void handleLance(String msg) {
+        JSONObject json = new JSONObject(msg);
+        int leilaoId = json.getInt("leilaoId");
+        int clienteId = json.getInt("clienteId");
+        double valor = json.getDouble("valor");
+
+        System.out.println("Lance recebido no leilão " + leilaoId + " do cliente " + clienteId + ": " + valor);
+
+        if (clienteId == this.clienteId) {
+            System.out.println("Este é o seu lance. Ignorando...");
+            return; 
+        }
+        System.out.println("Deseja fazer um lance? (s/n)");
+
+        String resposta = scanner.nextLine().trim().toLowerCase();
+
+        if(resposta.equals("s")){
+            System.out.println("Digite o valor do lance:");
+            double valorLance = Double.parseDouble(scanner.nextLine().trim());
+
+            Lance lance = new Lance(leilaoId, this.clienteId, valorLance);
+            publicarLance(lance);
+        } else {
+            System.out.println("Você optou por não gerar um lance para o leilão " + leilaoId);
+        }
+    }
+
+    public void handleRoutingKeyInvalida(String msg) {
+        System.out.println("Roteamento inválido: '" + msg + "'");
+        System.out.println("Ignorando mensagem...");
     }
 
     public static void main(String[] args) {
