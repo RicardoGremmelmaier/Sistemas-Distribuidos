@@ -49,14 +49,13 @@ public class MSNotificacao {
 
     public void handleLanceValidado(String msg) {
         JSONObject json = new JSONObject(msg);
-
         int leilaoId = json.getInt("leilaoId");
-        int client_id = json.getInt("client_id");
+        int clienteId = json.getInt("clienteId");
         double valor = json.getDouble("valor");
 
-        Lance lance = new Lance(leilaoId, client_id, valor);
+        Lance lance = new Lance(leilaoId, clienteId, valor);
         try{
-            publisher.publish("leilao." + leilaoId, lance.toString());
+            publisher.publish("leilao." + leilaoId + ".lance", lance.toString());
         }
         catch (Exception e) {
             throw new RuntimeException("Erro ao publicar notificação de lance validado", e);
@@ -64,17 +63,29 @@ public class MSNotificacao {
     }
 
     public void handleLeilaoVencedor(String msg) {
+        if (msg.contains("Nenhum lance válido")) {
+            int leilaoId = Integer.parseInt(msg.split("leilão")[1].trim());
+            System.out.println("Nenhum lance válido recebido.");
+            try{
+                publisher.publish("leilao." + leilaoId + ".vencedor", msg);
+            }
+            catch (Exception e) {
+                throw new RuntimeException("Erro ao publicar notificação de leilão vencedor", e);
+            }   
+            return;
+        }
         JSONObject json = new JSONObject(msg);
-
-        int clienteId = json.getInt("clienteId");
         int leilaoId = json.getInt("leilaoId");
+        int clienteId = json.getInt("clienteId");
         double valor = json.getDouble("valor");
+
 
         Lance lance = new Lance(leilaoId, clienteId, valor);
         try{    
-            publisher.publish("leilao." + leilaoId, leilaoVencedorToString(lance));
+            publisher.publish("leilao." + leilaoId + ".vencedor", leilaoVencedorToString(lance));
         }
         catch (Exception e) {
+            System.out.println("Erro ao publicar notificação de leilão vencedor");  
             throw new RuntimeException("Erro ao publicar notificação de leilão vencedor", e);
         } 
     }
