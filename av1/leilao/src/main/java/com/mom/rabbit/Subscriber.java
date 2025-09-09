@@ -29,7 +29,9 @@ public class Subscriber {
         channel.basicConsume(queueName, true, (tag, delivery) -> {
             String msg = new String(delivery.getBody(), "UTF-8");
             String routingKey = delivery.getEnvelope().getRoutingKey();
+            System.out.println("--------------------------------------------------");
             System.out.println("[SUB] Recebido [" + routingKey + "]: " + msg);
+            System.out.println("--------------------------------------------------");
             handler.accept("[" + routingKey + "] " + msg);
         }, tag -> {});
     }

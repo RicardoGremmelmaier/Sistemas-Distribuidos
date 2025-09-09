@@ -22,6 +22,8 @@ public class Publisher {
 
     public void publish(String routingKey, String message) throws IOException {
         channel.basicPublish(exchangeName, routingKey, null, message.getBytes());
+        System.out.println("--------------------------------------------------");
         System.out.println("[PUB] Enviado '" + routingKey + "':'" + message + "'");
+        System.out.println("--------------------------------------------------");
     }
 }
