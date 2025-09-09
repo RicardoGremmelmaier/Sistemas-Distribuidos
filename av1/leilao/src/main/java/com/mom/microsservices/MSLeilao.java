@@ -27,37 +27,37 @@ public class MSLeilao{
         }
     }
 
-public void criarLeilao(String descricao, int additionalMinutes) {
-    Leilao leilao = new Leilao(descricao, additionalMinutes);
-    leiloes.put(leilao.getLeilaoId(), leilao);
+    public void criarLeilao(String descricao, int additionalMinutes) {
+        Leilao leilao = new Leilao(descricao, additionalMinutes);
+        leiloes.put(leilao.getLeilaoId(), leilao);
 
-    Timer timer = new Timer();
+        Timer timer = new Timer();
 
-    long delayInicio = Duration.between(LocalDateTime.now(), leilao.getDataInicio()).toMillis();
+        long delayInicio = Duration.between(LocalDateTime.now(), leilao.getDataInicio()).toMillis();
 
-    timer.schedule(new TimerTask() {
-        @Override
-        public void run() {
-            System.out.println("Leilão " + leilao.getLeilaoId() + " iniciado.");
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                System.out.println("Leilão " + leilao.getLeilaoId() + " iniciado.");
 
-            try {
-                publisher.publish(routingLeilaoIniciado, leilao.toString());
-            } catch (Exception e) {
-                System.err.println("Erro ao publicar mensagem de leilão iniciado: " + e.getMessage());
-            }
-
-            long delayFim = Duration.between(leilao.getDataInicio(), leilao.getDataFim()).toMillis();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    finalizarLeilao(leilao);
+                try {
+                    publisher.publish(routingLeilaoIniciado, leilao.toString());
+                } catch (Exception e) {
+                    System.err.println("Erro ao publicar mensagem de leilão iniciado: " + e.getMessage());
                 }
-            }, delayFim);
-        }
-    }, delayInicio);
 
-    timers.put(leilao.getLeilaoId(), timer);
-}
+                long delayFim = Duration.between(leilao.getDataInicio(), leilao.getDataFim()).toMillis();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        finalizarLeilao(leilao);
+                    }
+                }, delayFim);
+            }
+        }, delayInicio);
+
+        timers.put(leilao.getLeilaoId(), timer);
+    }
 
 
     public void finalizarLeilao(Leilao leilao) {
