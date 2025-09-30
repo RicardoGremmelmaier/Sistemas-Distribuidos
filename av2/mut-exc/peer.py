@@ -1,7 +1,7 @@
 import time
 import threading
 import Pyro5.api
-from utils import now
+from utils import now, start_ns
 from enum import Enum
 
 class PeerState(Enum):
@@ -29,6 +29,13 @@ class Peer:
         self.state = PeerState.RELEASED
         self.timestamp = 0
 
+        ns = start_ns
+
+        self.daemon = Pyro5.api.Daemon()
+        self.uri = self.daemon.register(self)
+        ns().register(self.name, self.uri)
+
+        threading.Thread(target=self.daemon.requestLoop, daemon=True).start()
         threading.Thread(target=self.send_heartbeats, daemon=True).start()
         threading.Thread(target=self.check_heartbeats, daemon=True).start()
 
