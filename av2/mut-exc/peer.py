@@ -29,6 +29,7 @@ class Peer:
         self.waiting_replies = set()
         self.state = PeerState.RELEASED
         self.timestamp = 0
+        self.stop_critical = False
         self.scheduler = BackgroundScheduler()
 
         ns = start_ns()
@@ -44,9 +45,9 @@ class Peer:
         }
 
         threading.Thread(target=self.daemon.requestLoop, daemon=True).start()
-        self.scheduler.add_job(self.send_heartbeats, 'interval', seconds=1)
+        self.scheduler.add_job(self.send_heartbeats, 'interval', seconds=4)
         self.scheduler.add_job(self.check_heartbeats, 'interval', seconds=8)
-        self.scheduler.start()
+        #self.scheduler.start()
 
 
 
@@ -82,9 +83,22 @@ class Peer:
         self.state = PeerState.HELD
         print(f"\n[{self.name}] Entrou na seção crítica.")
 
-        # Provavelmente esperar um certo tempo aqui para simular o uso da seção crítica
-        # time.sleep(10) 
-        # self.release_critical_section()
+        self.use_critical_section()
+
+    """
+    Simula uso da seção crítica por um tempo.
+
+    :params: None
+    :return: None
+    """
+    def use_critical_section(self):
+        print(f"[{self.name}] Executando na seção crítica (pressione 2 no menu para sair).")
+        for _ in range(100):  # ~10s (100 * 0.1)
+            if self.stop_critical:
+                print(f"\n[{self.name}] Seção crítica interrompida manualmente.")
+                break
+            time.sleep(0.1)
+        self.release_critical_section()
 
     """
     Realiza o algoritmo de Ricati-Agrawala para sair da seção crítica.
