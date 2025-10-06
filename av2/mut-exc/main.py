@@ -1,11 +1,12 @@
 import sys
 from unittest import case
 import Pyro5.api
+import threading
 from peer import Peer
 from utils import parse_args
 
 def run(peer):
-    print("1. Requisitar recurso")
+    print("\n1. Requisitar recurso")
     print("2. Liberar recurso")
     print("3. Listar peers ativos")
     print("0. Sair")
@@ -14,15 +15,16 @@ def run(peer):
 
     if escolha == "1":
         peer.request_critical_section()
+        #threading.Thread(target=peer.request_critical_section, daemon=True).start()
     elif escolha == "2":
         peer.release_critical_section()
     elif escolha == "3":
-        print(f"[MAIN] Peers ativos: {list(peer.active_peers.keys())}")
+        print(f"\n[MAIN] Peers ativos: {list(peer.active_peers.keys())}")
     elif escolha == "0":
-        print("Saindo...")
+        print("\n[MAIN] Saindo...")
         exit(0)
     else:
-        print("[MAIN] Opção inválida.")
+        print("\n[MAIN] Opção inválida.")
 
 def main():
     args = parse_args()
