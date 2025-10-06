@@ -1,8 +1,9 @@
 import time
-import threading
 import Pyro5.api
+import threading
 from utils import now, start_ns
 from enum import Enum
+from apscheduler.schedulers.background import BackgroundScheduler
 
 class PeerState(Enum):
     RELEASED = 1
@@ -28,19 +29,26 @@ class Peer:
         self.waiting_replies = set()
         self.state = PeerState.RELEASED
         self.timestamp = 0
+        self.scheduler = BackgroundScheduler()
 
         ns = start_ns()
 
         self.daemon = Pyro5.api.Daemon()
         self.uri = self.daemon.register(self)
         ns.register(self.name, self.uri)
-        self.active_peers = ns.list()  
+        all_peers = ns.list()
+        self.active_peers = {
+            name: {"uri": uri, "last_heartbeat": 0}
+            for name, uri in all_peers.items()
+            if name not in {self.name, "Pyro.NameServer"}
+        }
 
-
-        # Substituir por apscheduler
-        # threading.Thread(target=self.daemon.requestLoop, daemon=True).start()
-        # threading.Thread(target=self.send_heartbeats, daemon=True).start()
-        # threading.Thread(target=self.check_heartbeats, daemon=True).start()
+        threading.Thread(target=self.daemon.requestLoop, daemon=True).start()
+        self.scheduler.add_job(self.send_heartbeats, 'interval', seconds=4)
+        self.scheduler.add_job(self.check_heartbeats, 'interval', seconds=4)
+        self.scheduler.start()
+        
+        
 
 
     ## ============================ Algoritmo de Ricati-Agrawala ============================ ##
@@ -56,10 +64,16 @@ class Peer:
         self.waiting_replies = set(self.active_peers.keys())
         print(f"[{self.name}] Requisitando seção crítica com timestamp {self.timestamp}.")
 
-        for peer in self.active_peers.keys():
+        for peer in list(self.waiting_replies):
             try:
                 proxy = Pyro5.api.Proxy(f"PYRONAME:{peer}")
-                proxy.receive_request(self.name, self.timestamp)
+                granted = proxy.receive_request(self.name, self.timestamp)
+
+                if granted:
+                    self.waiting_replies.discard(peer)
+                    print(f"[{self.name}] Recebeu permissão de {peer}.")
+                else:
+                    print(f"[{self.name}] Permissão negada por {peer}.")
             except:
                 print(f"[{self.name}] Não foi possível enviar request para {peer}.")
 
@@ -68,7 +82,10 @@ class Peer:
 
         self.state = PeerState.HELD
         print(f"[{self.name}] Entrou na seção crítica.")
+
         # Provavelmente esperar um certo tempo aqui para simular o uso da seção crítica
+        time.sleep(10) 
+        self.release_critical_section()
 
     """
     Realiza o algoritmo de Ricati-Agrawala para sair da seção crítica.
@@ -84,7 +101,7 @@ class Peer:
             peer, timestamp = self.request_queue.pop(0)
             try:
                 proxy = Pyro5.api.Proxy(f"PYRONAME:{peer}")
-                proxy.receive_reply(self.name)
+                proxy.receive_release(self.name)
                 print(f"[{self.name}] Enviou reply para {peer} da fila.")
             except:
                 print(f"[{self.name}] Não foi possível enviar reply para {peer} da fila.")
@@ -100,16 +117,25 @@ class Peer:
         if self.state == PeerState.HELD or (self.state == PeerState.WANTED and (self.timestamp, self.name) < (timestamp, peer)):
             self.request_queue.append((peer, timestamp))
             print(f"[{self.name}] Adicionou {peer} à fila de requisições.")
+            return False
         else:
-            try:
-                proxy = Pyro5.api.Proxy(f"PYRONAME:{peer}")
-                proxy.receive_reply(self.name)
-                print(f"[{self.name}] Enviou reply para {peer}.")
-            except:
-                print(f"[{self.name}] Não foi possível enviar reply para {peer}.")
-
+            print(f"[{self.name}] Concedeu permissão para {peer}.")
+            return True
     
 
+    """
+    Recebe a liberação da seção crítica de outro peer.
+
+    :param peer: O nome do peer que está liberando a seção crítica.
+    :return: None
+    """
+    @Pyro5.api.expose
+    def receive_release(self, peer):
+        if peer in self.waiting_replies:
+            self.waiting_replies.remove(peer)
+            print(f"[{self.name}] Recebeu release de {peer}.")
+
+    
     ## ============================ Monitoramento de Heartbeats ============================ ##
     """
     Monitora os heartbeats recebidos dos outros peers.
@@ -123,13 +149,12 @@ class Peer:
         while True:
             current_time = now()
             to_remove = []
-            for peer, last_heartbeat in self.active_peers.items():
-                if current_time - last_heartbeat > 5000: 
+            for peer, data in self.active_peers.items():
+                if current_time - data["last_heartbeat"] > 5000:
                     to_remove.append(peer)
             for peer in to_remove:
                 print(f"[{self.name}] Peer {peer} removido por timeout.")
                 del self.active_peers[peer]
-            time.sleep(1)
 
     """
     Envia heartbeats para todos os peers ativos a cada segundo.
@@ -145,7 +170,6 @@ class Peer:
                     proxy.listen_heartbeat(self.name)
                 except:
                     print(f"[{self.name}] Não foi possível enviar heartbeat para {peer}.")
-            time.sleep(1)
 
     """
     Recebe um heartbeat de outro peer e atualiza seu timestamp.
@@ -155,5 +179,6 @@ class Peer:
     """
     @Pyro5.api.expose
     def listen_heartbeat(self, peer):
-        self.active_peers[peer] = now()
+        if peer in self.active_peers:
+            self.active_peers[peer]["last_heartbeat"] = now()
         print(f"[{self.name}] Heartbeat recebido de {peer}.")

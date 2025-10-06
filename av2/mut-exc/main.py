@@ -13,14 +13,11 @@ def run(peer):
     escolha = input("Escolha uma opção:")
 
     if escolha == "1":
-        #peer.request_critical_section()
-        print("Recurso requisitado!")
+        peer.request_critical_section()
     elif escolha == "2":
-        #peer.release_critical_section()
-        print("Recurso liberado!")
+        peer.release_critical_section()
     elif escolha == "3":
-        #print(f"[MAIN] Peers ativos: {list(peer.active_peers.keys())}")
-        print("Peers ativos: pipipi popopo")
+        print(f"[MAIN] Peers ativos: {list(peer.active_peers.keys())}")
     elif escolha == "0":
         print("Saindo...")
         exit(0)
@@ -35,7 +32,11 @@ def main():
     print(f"[MAIN] Peer {peer_name} registrado no NameServer.")
     
     while(1):
-        run(peer)
+        try:
+            run(peer)
+        except KeyboardInterrupt as e:
+            print(f"\n[MAIN] Encerrando peer {peer_name}.")
+            sys.exit(0)
 
 if __name__ == "__main__":
     main()
