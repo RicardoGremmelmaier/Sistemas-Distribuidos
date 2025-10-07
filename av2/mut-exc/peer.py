@@ -174,7 +174,7 @@ class Peer:
 
             with self.lock:
                 for peer, data in self.active_peers.items():
-                    if current_time - data["last_heartbeat"] > 15000:
+                    if current_time - data["last_heartbeat"] > 16000:
                         to_remove.append(peer)
                 for peer in to_remove:
                     del self.active_peers[peer]
