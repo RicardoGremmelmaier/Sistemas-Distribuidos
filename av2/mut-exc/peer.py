@@ -149,6 +149,7 @@ class Peer:
     :return: None
     """
     @Pyro5.api.expose
+    @Pyro5.api.oneway
     def receive_release(self, peer):
         if peer in self.waiting_replies:
             self.waiting_replies.remove(peer)
@@ -179,7 +180,7 @@ class Peer:
                     if peer in self.waiting_replies:
                         self.waiting_replies.remove(peer)
 
-            time.sleep(5)
+            time.sleep(3)
     """
     Envia heartbeats para todos os peers ativos a cada segundo.
     
@@ -205,6 +206,7 @@ class Peer:
     :return: None
     """
     @Pyro5.api.expose
+    @Pyro5.api.oneway
     def listen_heartbeat(self, peer):
         with self.lock:
             if peer in self.active_peers:
