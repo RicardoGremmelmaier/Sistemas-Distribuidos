@@ -3,7 +3,6 @@ import Pyro5.api
 import threading
 from utils import now, start_ns
 from enum import Enum
-from apscheduler.schedulers.background import BackgroundScheduler
 
 class PeerState(Enum):
     RELEASED = 1
@@ -31,7 +30,6 @@ class Peer:
         self.timestamp = 0
         self.stop_critical = False
         self.lock = threading.Lock()
-        self.scheduler = BackgroundScheduler()
 
         ns = start_ns()
 
