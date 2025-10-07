@@ -30,6 +30,7 @@ class Peer:
         self.state = PeerState.RELEASED
         self.timestamp = 0
         self.stop_critical = False
+        self.lock = threading.Lock()
         self.scheduler = BackgroundScheduler()
 
         ns = start_ns()
@@ -39,15 +40,14 @@ class Peer:
         ns.register(self.name, self.uri)
         all_peers = ns.list()
         self.active_peers = {
-            name: {"uri": uri, "last_heartbeat": 0}
+            name: {"uri": uri, "last_heartbeat": now()}
             for name, uri in all_peers.items()
             if name not in {self.name, "Pyro.NameServer"}
         }
 
         threading.Thread(target=self.daemon.requestLoop, daemon=True).start()
-        self.scheduler.add_job(self.send_heartbeats, 'interval', seconds=4)
-        self.scheduler.add_job(self.check_heartbeats, 'interval', seconds=8)
-        #self.scheduler.start()
+        threading.Thread(target=self.send_heartbeat, daemon=True).start()
+        threading.Thread(target=self.check_heartbeats, daemon=True).start()
 
 
 
@@ -76,6 +76,10 @@ class Peer:
                     print(f"\n[{self.name}] Permissão negada por {peer}.")
             except:
                 print(f"\n[{self.name}] Não foi possível enviar request para {peer}.")
+                with self.lock:
+                    if peer in self.active_peers:
+                        del self.active_peers[peer]
+                self.waiting_replies.discard(peer)
 
         while self.waiting_replies:
             time.sleep(0.1)
@@ -115,9 +119,9 @@ class Peer:
             try:
                 proxy = Pyro5.api.Proxy(f"PYRONAME:{peer}")
                 proxy.receive_release(self.name)
-                print(f"\n[{self.name}] Enviou reply para {peer} da fila.")
+                print(f"\n[{self.name}] Enviou release para {peer} da fila.")
             except:
-                print(f"\n[{self.name}] Não foi possível enviar reply para {peer} da fila.")
+                print(f"\n[{self.name}] Não foi possível enviar release para {peer} da fila.")
 
     """
     Realiza o algoritmo de Ricati-Agrawala para responder pedidos da seção crítica.
@@ -132,9 +136,13 @@ class Peer:
             print(f"\n[{self.name}] Adicionou {peer} à fila de requisições.")
             return False
         else:
-            print(f"\n[{self.name}] Concedeu permissão para {peer}.")
-            return True
-    
+            with self.lock:
+                if peer in self.active_peers:
+                    print(f"\n[{self.name}] Concedeu permissão para {peer}.")
+                    return True
+                else:
+                    print(f"\n[{self.name}] Peer {peer} não está mais ativo.")
+                    return False
 
     """
     Recebe a liberação da seção crítica de outro peer.
@@ -159,28 +167,38 @@ class Peer:
     :return: None
     """
     def check_heartbeats(self):
+        time.sleep(10) 
+        while True:
             current_time = now()
             to_remove = []
-            for peer, data in self.active_peers.items():
-                if current_time - data["last_heartbeat"] > 7000:
-                    to_remove.append(peer)
-            for peer in to_remove:
-                print(f"\n[{self.name}] Peer {peer} removido por timeout.")
-                del self.active_peers[peer]
 
+            with self.lock:
+                for peer, data in self.active_peers.items():
+                    if current_time - data["last_heartbeat"] > 15000:
+                        to_remove.append(peer)
+                for peer in to_remove:
+                    del self.active_peers[peer]
+                    if peer in self.waiting_replies:
+                        self.waiting_replies.remove(peer)
+
+            time.sleep(5)
     """
     Envia heartbeats para todos os peers ativos a cada segundo.
     
     :params: None
     :return: None
     """
-    def send_heartbeats(self):
-            for peer, data in list(self.active_peers.items()):
+    def send_heartbeat(self):
+        while True:
+            with self.lock:
+                peers = list(self.active_peers.items())
+            for peer, data in peers:
                 try:
                     proxy = Pyro5.api.Proxy(data["uri"])
                     proxy.listen_heartbeat(self.name)
-                except Exception as e:
-                    print(f"\n[{self.name}] Não foi possível enviar heartbeat para {peer}: {e}")
+                except Exception:
+                    pass
+            time.sleep(1)
 
     """
     Recebe um heartbeat de outro peer e atualiza seu timestamp.
@@ -190,11 +208,12 @@ class Peer:
     """
     @Pyro5.api.expose
     def listen_heartbeat(self, peer):
-        if peer in self.active_peers:
-            self.active_peers[peer]["last_heartbeat"] = now()
-        else:
-            self.active_peers[peer] = {
-                "uri": f"PYRONAME:{peer}",
-                "last_heartbeat": now()
-            }
-            print(f"\n[{self.name}] Novo peer {peer} adicionado à lista de ativos.")
+        with self.lock:
+            if peer in self.active_peers:
+                self.active_peers[peer]["last_heartbeat"] = now()
+            else:
+                self.active_peers[peer] = {
+                    "uri": f"PYRONAME:{peer}",
+                    "last_heartbeat": now()
+                }
+                print(f"\n[{self.name}] Novo peer {peer} adicionado à lista de ativos.")
