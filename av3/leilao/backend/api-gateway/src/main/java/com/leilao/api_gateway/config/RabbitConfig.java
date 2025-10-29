@@ -34,8 +34,12 @@ public class RabbitConfig {
     }
 
     @Bean
-    public Binding bindingGatewayQueue(Queue gatewayQueue, TopicExchange lanceExchange) {
-        // Gateway ouve eventos de lance e pagamento
+    public Binding bindGatewayQueueToLance(Queue gatewayQueue, TopicExchange lanceExchange) {
         return BindingBuilder.bind(gatewayQueue).to(lanceExchange).with("#");
+    }
+
+    @Bean
+    public Binding bindGatewayQueueToPagamento(Queue gatewayQueue, TopicExchange pagamentoExchange) {
+        return BindingBuilder.bind(gatewayQueue).to(pagamentoExchange).with("#");
     }
 }
