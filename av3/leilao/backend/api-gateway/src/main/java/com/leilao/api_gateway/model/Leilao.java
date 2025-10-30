@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 
 public class Leilao {
     private Integer leilaoId;
+    private String nomeDoProduto;
     private String descricao;
+    private Double lanceInicial;
     private LocalDateTime dataInicio;
     private LocalDateTime dataFim;
     private Integer idVencedor;
@@ -13,8 +15,14 @@ public class Leilao {
     public Integer getLeilaoId() { return leilaoId; }
     public void setLeilaoId(Integer leilaoId) { this.leilaoId = leilaoId; }
 
+    public String getNomeDoProduto() { return nomeDoProduto; }
+    public void setNomeDoProduto(String nomeDoProduto) { this.nomeDoProduto = nomeDoProduto; }
+
     public String getDescricao() { return descricao; }
     public void setDescricao(String descricao) { this.descricao = descricao; }
+
+    public Double getLanceInicial() { return lanceInicial; }
+    public void setLanceInicial(Double lanceInicial) { this.lanceInicial = lanceInicial; }
 
     public LocalDateTime getDataInicio() { return dataInicio; }
     public void setDataInicio(LocalDateTime dataInicio) { this.dataInicio = dataInicio; }
