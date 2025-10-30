@@ -35,7 +35,7 @@ public class NotificationService {
         }
     }
 
-    public void cancelarNotificacoes (Integer clienteID) {
+    public void cancelarNotificacao (Integer clienteID) {
         SseEmitter emitter = registry.getEmitter(clienteID);
         if (emitter != null) {
             try {
