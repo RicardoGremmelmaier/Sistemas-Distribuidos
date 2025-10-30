@@ -18,7 +18,7 @@ public class LeilaoController {
     @PostMapping
     public ResponseEntity<String> criarLeilao(@RequestBody Leilao leilao) {
         leilaoService.criarLeilao(leilao);
-        return ResponseEntity.ok("Leilão criado com sucesso");
+        return ResponseEntity.ok("Leilão criado com sucesso no MS Leilao");
     }
 
     @GetMapping("/ativos")
