@@ -34,6 +34,11 @@ public class RabbitConfig {
     }
 
     @Bean
+    public Binding bindGatewayQueueToLeilao(Queue gatewayQueue, TopicExchange leilaoExchange) {
+        return BindingBuilder.bind(gatewayQueue).to(leilaoExchange).with("#");
+    }
+
+    @Bean
     public Binding bindGatewayQueueToLance(Queue gatewayQueue, TopicExchange lanceExchange) {
         return BindingBuilder.bind(gatewayQueue).to(lanceExchange).with("#");
     }

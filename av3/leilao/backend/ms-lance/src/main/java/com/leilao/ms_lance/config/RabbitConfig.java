@@ -8,11 +8,17 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitConfig {
 
     public static final String EXCHANGE_LEILAO = "leilao.events";
+    public static final String EXCHANGE_LANCE = "lance.events";
     public static final String QUEUE_LANCES = "lance.queue";
 
     @Bean
     public TopicExchange leilaoExchange() {
         return new TopicExchange(EXCHANGE_LEILAO);
+    }
+
+    @Bean
+    public TopicExchange lanceExchange() {
+        return new TopicExchange(EXCHANGE_LANCE);
     }
 
     @Bean

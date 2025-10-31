@@ -21,9 +21,9 @@ public class LeilaoPublisher {
         try {
             String payload = mapper.writeValueAsString(evento);
             rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_LEILAO, routingKey, payload);
-            System.out.println("Publicado evento no RabbitMQ: " + routingKey + " -> " + payload);
+            System.out.println("[MSLeilao] Evento publicado: " + routingKey + " -> " + payload);
         } catch (Exception e) {
-            System.err.println("Erro ao publicar evento de leilao: " + e.getMessage());
+            System.err.println("[MSLeilao] Erro ao publicar evento de leilao: " + e.getMessage());
         }
     }
 }

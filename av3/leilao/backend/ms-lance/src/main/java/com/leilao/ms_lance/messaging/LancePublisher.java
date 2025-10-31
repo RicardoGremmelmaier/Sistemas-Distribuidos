@@ -19,10 +19,10 @@ public class LancePublisher {
     public void publish(String routingKey, EventoLance evento) {
         try {
             String payload = mapper.writeValueAsString(evento);
-            rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_LEILAO, routingKey, payload);
-            System.out.println("Evento publicado: " + routingKey + " -> " + payload);
+            rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_LANCE, routingKey, payload);
+            System.out.println("[MSLance] Evento publicado: " + routingKey + " -> " + payload);
         } catch (Exception e) {
-            System.err.println("Erro ao publicar lance: " + e.getMessage());
+            System.err.println("[MSLance] Erro ao publicar evento: " + e.getMessage());
         }
     }
 }
