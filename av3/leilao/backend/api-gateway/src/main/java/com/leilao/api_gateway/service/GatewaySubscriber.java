@@ -13,9 +13,9 @@ public class GatewaySubscriber {
 
     @RabbitListener(queues = "queue.gateway")
     public void consumirEvento(Evento evento) {
-        // Lógica para processar a notificação recebida
+        // TODO: Lógica para processar a notificação recebida
         // Mapear evento -> cliente(s) e enviar notificação
-        System.out.println("Notificação recebida: " + evento);
+        System.out.println("[Gateway] Notificação recebida: " + evento);
         notificationService.notificarCliente(1, evento);
     }
 
