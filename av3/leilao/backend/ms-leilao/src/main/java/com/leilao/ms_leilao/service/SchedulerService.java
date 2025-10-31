@@ -1,5 +1,6 @@
 package com.leilao.ms_leilao.service;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,7 @@ public class SchedulerService {
     private final java.util.concurrent.ConcurrentHashMap<Integer, ScheduledFuture<?>> scheduledStarts = new java.util.concurrent.ConcurrentHashMap<>();
     private final java.util.concurrent.ConcurrentHashMap<Integer, ScheduledFuture<?>> scheduledEnds = new java.util.concurrent.ConcurrentHashMap<>();
 
-    public SchedulerService(TaskScheduler scheduler, MsLeilaoService leilaoService) {
+    public SchedulerService(TaskScheduler scheduler, @Lazy MsLeilaoService leilaoService) {
         this.scheduler = scheduler;
         this.leilaoService = leilaoService;
     }
