@@ -34,7 +34,7 @@ public class MsLeilaoService {
         input.setStatus(LeilaoStatus.PENDENTE);
 
         if (input.getDataInicio() == null || input.getDataFim() == null) {
-            throw new IllegalArgumentException("dataInicio e dataFim são obrigatórios e em formato ISO-8601");
+            throw new IllegalArgumentException("dataInicio e dataFim são obrigatórios");
         }
 
         leiloes.put(id, input);
