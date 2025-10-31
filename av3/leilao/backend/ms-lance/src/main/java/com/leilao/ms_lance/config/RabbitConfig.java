@@ -9,7 +9,7 @@ public class RabbitConfig {
 
     public static final String EXCHANGE_LEILAO = "leilao.events";
     public static final String EXCHANGE_LANCE = "lance.events";
-    public static final String QUEUE_LANCES = "lance.queue";
+    public static final String QUEUE_LANCE = "lance.queue";
 
     @Bean
     public TopicExchange leilaoExchange() {
@@ -23,7 +23,7 @@ public class RabbitConfig {
 
     @Bean
     public Queue lanceQueue() {
-        return new Queue(QUEUE_LANCES);
+        return new Queue(QUEUE_LANCE);
     }
 
     @Bean
