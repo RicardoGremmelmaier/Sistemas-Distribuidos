@@ -1,5 +1,7 @@
 package com.leilao.ms_pagamento.model;
 
-public class StatusPagamento {
-    
+public enum StatusPagamento {
+    PENDENTE,
+    APROVADO,
+    RECUSADO
 }
