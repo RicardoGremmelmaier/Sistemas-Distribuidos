@@ -3,20 +3,21 @@ package com.leilao.ms_lance.messaging;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leilao.ms_lance.model.EventoLance;
 import com.leilao.ms_lance.service.LanceValidatorService;
-
-import java.util.Map;
-
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 @Component
 public class LanceSubscriber {
 
     private final ObjectMapper mapper = new ObjectMapper();
     private final LanceValidatorService validator;
+    private final LancePublisher publisher;
 
-    public LanceSubscriber(LanceValidatorService validator) {
+    public LanceSubscriber(LanceValidatorService validator, LancePublisher publisher) {
         this.validator = validator;
+        this.publisher = publisher;
     }
 
     @RabbitListener(queues = "lance.queue")
@@ -28,10 +29,28 @@ public class LanceSubscriber {
             if ("leilao_iniciado".equals(evento.getTipo())) {
                 int leilaoId = (int) ((Map<?, ?>) evento.getDados()).get("leilaoId");
                 validator.ativarLeilao(leilaoId);
-            } else if ("leilao_finalizado".equals(evento.getTipo())) {
+            }
+
+            else if ("leilao_finalizado".equals(evento.getTipo())) {
                 int leilaoId = (int) ((Map<?, ?>) evento.getDados()).get("leilaoId");
                 validator.finalizarLeilao(leilaoId);
+
+                Double valor = validator.getMaiorLance(leilaoId);
+                Integer vencedorId = validator.getVencedor(leilaoId);
+
+                if (valor != null && valor > 0 && vencedorId != null) {
+                    EventoLance eventoVencedor = new EventoLance(
+                        "leilao_vencedor",
+                        "Leilão " + leilaoId + " finalizado. Vencedor: cliente " + vencedorId,
+                        Map.of("leilaoId", leilaoId, "vencedorId", vencedorId, "valor", valor)
+                    );
+                    publisher.publish("leilao.vencedor", eventoVencedor);
+                    System.out.println("[MSLance] Evento publicado: leilao_vencedor -> " + eventoVencedor);
+                } else {
+                    System.out.println("[MSLance] Nenhum lance válido para o leilão " + leilaoId);
+                }
             }
+
         } catch (Exception e) {
             System.err.println("[MSLance] Erro ao processar evento: " + e.getMessage());
         }
