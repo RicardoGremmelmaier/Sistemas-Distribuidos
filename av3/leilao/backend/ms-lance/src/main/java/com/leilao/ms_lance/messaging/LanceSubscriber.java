@@ -13,7 +13,11 @@ import org.springframework.stereotype.Component;
 public class LanceSubscriber {
 
     private final ObjectMapper mapper = new ObjectMapper();
-    private final LanceValidatorService validator = new LanceValidatorService();
+    private final LanceValidatorService validator;
+
+    public LanceSubscriber(LanceValidatorService validator) {
+        this.validator = validator;
+    }
 
     @RabbitListener(queues = "lance.queue")
     public void receberMensagem(String mensagem) {
