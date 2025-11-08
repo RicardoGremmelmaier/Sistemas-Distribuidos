@@ -1,5 +1,8 @@
 package com.leilao.api_gateway.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Evento {
     private String tipo;
     private String mensagem;
@@ -13,4 +16,13 @@ public class Evento {
 
     public Object getDados() { return dados; }
     public void setDados(Object dados) { this.dados = dados; }
+
+    @Override
+    public String toString() {
+        return "Evento{" +
+                "tipo='" + tipo + '\'' +
+                ", mensagem='" + mensagem + '\'' +
+                ", dados=" + dados +
+                '}';
+}
 }
