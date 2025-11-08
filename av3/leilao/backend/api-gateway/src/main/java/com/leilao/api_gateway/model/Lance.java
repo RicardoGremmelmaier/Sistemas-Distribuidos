@@ -6,10 +6,10 @@ public class Lance {
     private double valor;
 
     public Integer getLeilaoId() { return leilaoId; }
-    public void setIdLeilao(Integer idLeilao) { this.leilaoId = idLeilao; }
+    public void setLeilaoId(Integer leilaoId) { this.leilaoId = leilaoId; }
 
-    public Integer getIdUsuario() { return clienteId; }
-    public void setIdUsuario(Integer idUsuario) { this.clienteId = idUsuario; }
+    public Integer getClienteId() { return clienteId; }
+    public void setClienteId(Integer clienteId) { this.clienteId = clienteId; }
 
     public double getValor() { return valor; }
     public void setValor(double valor) { this.valor = valor; }

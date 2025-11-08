@@ -59,7 +59,7 @@ public class MsLeilaoService {
                         "leilao_iniciado",
                         "Leilão iniciado: " + leilao.getId(),
                         Map.of(
-                                "idLeilao", leilao.getId(),
+                                "leilaoId", leilao.getId(),
                                 "nomeProduto", leilao.getNomeProduto(),
                                 "dataInicio", leilao.getDataInicio().toString(),
                                 "dataFim", leilao.getDataFim().toString()
@@ -78,7 +78,7 @@ public class MsLeilaoService {
                         "leilao_finalizado",
                         "Leilão finalizado: " + leilao.getId(),
                         Map.of(
-                                "idLeilao", leilao.getId(),
+                                "leilaoId", leilao.getId(),
                                 "dataFim", leilao.getDataFim().toString()
                         )
                 );

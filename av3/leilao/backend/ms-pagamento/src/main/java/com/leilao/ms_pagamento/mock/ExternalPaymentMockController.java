@@ -21,7 +21,7 @@ public class ExternalPaymentMockController {
 
     @PostMapping("/create")
     public ResponseEntity<Map<String, Object>> createPayment(@RequestBody Map<String, Object> payload) {
-        int idLeilao = (int) payload.get("idLeilao");
+        int leilaoId = (int) payload.get("leilaoId");
         double valor = ((Number) payload.get("valor")).doubleValue();
         Map<?, ?> dadosCliente = (Map<?, ?>) payload.get("dadosCliente");
 
@@ -30,10 +30,10 @@ public class ExternalPaymentMockController {
 
         System.out.println("[MockPagamento] Nova transação criada:");
         System.out.println("  • ID Transação: " + idTransacao);
-        System.out.println("  • Leilão: " + idLeilao);
+        System.out.println("  • Leilão: " + leilaoId);
         System.out.println("  • Valor: R$ " + valor);
 
-        simulateAsyncCallback(idTransacao, idLeilao, valor, dadosCliente);
+        simulateAsyncCallback(idTransacao, leilaoId, valor, dadosCliente);
 
         Map<String, Object> response = Map.of(
                 "idTransacao", idTransacao,
@@ -46,7 +46,7 @@ public class ExternalPaymentMockController {
     }
 
     @Async
-    public void simulateAsyncCallback(String idTransacao, int idLeilao, double valor, Map<?, ?> dadosCliente) {
+    public void simulateAsyncCallback(String idTransacao, int leilaoId, double valor, Map<?, ?> dadosCliente) {
         try {
             int delay = ThreadLocalRandom.current().nextInt(5000, 10000);
             Thread.sleep(delay);
@@ -57,7 +57,7 @@ public class ExternalPaymentMockController {
 
             Map<String, Object> callbackPayload = Map.of(
                     "idTransacao", idTransacao,
-                    "idLeilao", idLeilao,
+                    "leilaoId", leilaoId,
                     "valor", valor,
                     "status", status.name(),
                     "dadosCliente", dadosCliente

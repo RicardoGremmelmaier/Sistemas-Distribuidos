@@ -22,10 +22,10 @@ public class PagamentoService {
 
         EventoPagamento evento = new EventoPagamento(
             "link_pagamento",
-            "Link gerado para o pagamento do leilão " + request.getIdLeilao(),
+            "Link gerado para o pagamento do leilão " + request.getLeilaoId(),
             Map.of(
-                    "idLeilao", request.getIdLeilao(),
-                    "idCliente", request.getIdCliente(),
+                    "leilaoId", request.getLeilaoId(),
+                    "clienteId", request.getClienteId(),
                     "valor", request.getValor(),
                     "link", fakeLink
             )
@@ -36,12 +36,12 @@ public class PagamentoService {
         return response;
     }
 
-    public void atualizarStatusPagamento (int idLeilao, StatusPagamento status){
+    public void atualizarStatusPagamento (int leilaoId, StatusPagamento status){
         EventoPagamento evento = new EventoPagamento(
             "status_pagamento",
             "Status atualizado para " + status,
             Map.of(
-                    "idLeilao", idLeilao,
+                    "leilaoId", leilaoId,
                     "status", status.name()
             )
         );

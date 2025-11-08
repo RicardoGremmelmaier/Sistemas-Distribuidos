@@ -17,17 +17,17 @@ public class PagamentoController {
 
     @PostMapping("/callback")
     public ResponseEntity<String> callback(@RequestBody CallbackRequest req) {
-        pagamentoService.atualizarStatusPagamento(req.getIdLeilao(), req.getStatus());
+        pagamentoService.atualizarStatusPagamento(req.getLeilaoId(), req.getStatus());
         return ResponseEntity.ok("Status processado com sucesso");
     }
 
     // Classe interna apenas para simplificar o payload do callback
     public static class CallbackRequest {
-        private int idLeilao;
+        private int leilaoId;
         private StatusPagamento status;
 
-        public int getIdLeilao() { return idLeilao; }
-        public void setIdLeilao(int idLeilao) { this.idLeilao = idLeilao; }
+        public int getLeilaoId() { return leilaoId; }
+        public void setLeilaoId(int leilaoId) { this.leilaoId = leilaoId; }
         public StatusPagamento getStatus() { return status; }
         public void setStatus(StatusPagamento status) { this.status = status; }
     }

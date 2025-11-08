@@ -1,24 +1,24 @@
 package com.leilao.ms_pagamento.model;
 
 public class PagamentoRequest {
-    private int idLeilao;
-    private int idCliente;
+    private int leilaoId;
+    private int clienteId;
     private double valor;
     private String moeda = "BRL";
 
     public PagamentoRequest() {}
 
-    public PagamentoRequest(int idLeilao, int idCliente, double valor) {
-        this.idLeilao = idLeilao;
-        this.idCliente = idCliente;
+    public PagamentoRequest(int leilaoId, int clienteId, double valor) {
+        this.leilaoId = leilaoId;
+        this.clienteId = clienteId;
         this.valor = valor;
     }
 
-    public int getIdLeilao() {return idLeilao; }
-    public void setIdLeilao(int idLeilao) {this.idLeilao = idLeilao; }
+    public int getLeilaoId() {return leilaoId; }
+    public void setLeilaoId(int leilaoId) {this.leilaoId = leilaoId; }
 
-    public int getIdCliente() {return idCliente; }
-    public void setIdCliente(int idCliente) {this.idCliente = idCliente; }
+    public int getClienteId() {return clienteId; }
+    public void setClienteId(int clienteId) {this.clienteId = clienteId; }
 
     public double getValor() {return valor; }
     public void setValor(double valor) {this.valor = valor; }

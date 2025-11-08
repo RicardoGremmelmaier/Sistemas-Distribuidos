@@ -22,11 +22,11 @@ public class LanceSubscriber {
             System.out.println("[MSLance] recebeu evento: " + evento.getTipo());
 
             if ("leilao_iniciado".equals(evento.getTipo())) {
-                int idLeilao = (int) ((Map<?, ?>) evento.getDados()).get("idLeilao");
-                validator.ativarLeilao(idLeilao);
+                int leilaoId = (int) ((Map<?, ?>) evento.getDados()).get("leilaoId");
+                validator.ativarLeilao(leilaoId);
             } else if ("leilao_finalizado".equals(evento.getTipo())) {
-                int idLeilao = (int) ((Map<?, ?>) evento.getDados()).get("idLeilao");
-                validator.finalizarLeilao(idLeilao);
+                int leilaoId = (int) ((Map<?, ?>) evento.getDados()).get("leilaoId");
+                validator.finalizarLeilao(leilaoId);
             }
         } catch (Exception e) {
             System.err.println("[MSLance] Erro ao processar evento: " + e.getMessage());

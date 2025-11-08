@@ -14,18 +14,18 @@ public class LanceValidatorService {
     private final Map<Integer, Double> maiorLancePorLeilao = new ConcurrentHashMap<>();
     private final Set<Integer> leiloesAtivos = ConcurrentHashMap.newKeySet();
 
-    public void ativarLeilao(int idLeilao) {
-        leiloesAtivos.add(idLeilao);
-        System.out.println("Leilão " + idLeilao + " ativado para receber lances.");
+    public void ativarLeilao(int leilaoId) {
+        leiloesAtivos.add(leilaoId);
+        System.out.println("Leilão " + leilaoId + " ativado para receber lances.");
     }
 
-    public void finalizarLeilao(int idLeilao) {
-        leiloesAtivos.remove(idLeilao);
-        System.out.println("Leilão " + idLeilao + " finalizado, não aceita mais lances.");
+    public void finalizarLeilao(int leilaoId) {
+        leiloesAtivos.remove(leilaoId);
+        System.out.println("Leilão " + leilaoId + " finalizado, não aceita mais lances.");
     }
 
-    public boolean estaAtivo(int idLeilao) {
-        return leiloesAtivos.contains(idLeilao);
+    public boolean estaAtivo(int leilaoId) {
+        return leiloesAtivos.contains(leilaoId);
     }
 
     public ResultadoLance validar(Lance lance) {
@@ -41,7 +41,7 @@ public class LanceValidatorService {
         return new ResultadoLance(true, "Lance aceito");
     }
 
-    public Double getMaiorLance(int idLeilao) {
-        return maiorLancePorLeilao.get(idLeilao);
+    public Double getMaiorLance(int leilaoId) {
+        return maiorLancePorLeilao.get(leilaoId);
     }
 }

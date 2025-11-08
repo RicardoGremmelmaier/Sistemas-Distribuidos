@@ -26,14 +26,14 @@ public class MsLanceService {
             EventoLance evento = new EventoLance(
                 "lance_validado",
                 "Novo lance aceito para leilão " + lance.getLeilaoId(),
-                Map.of("idLeilao", lance.getLeilaoId(), "valor", lance.getValor(), "idCliente", lance.getClienteId())
+                Map.of("leilaoId", lance.getLeilaoId(), "valor", lance.getValor(), "clienteId", lance.getClienteId())
             );
             publisher.publish("lance.validado", evento);
         } else {
             EventoLance evento = new EventoLance(
                 "lance_invalidado",
                 "Lance invalidado: " + resultado.getMotivo(),
-                Map.of("idLeilao", lance.getLeilaoId(), "idCliente", lance.getClienteId())
+                Map.of("leilaoId", lance.getLeilaoId(), "clienteId", lance.getClienteId())
             );
             publisher.publish("lance.invalidado", evento);
         }

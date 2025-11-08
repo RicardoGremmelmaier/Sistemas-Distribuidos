@@ -24,11 +24,11 @@ public class PagamentoSubscriber {
             if ("leilao_vencedor".equals(event.get("tipo"))) {
                 Map<?, ?> dados = (Map<?, ?>) event.get("dados");
 
-                int idLeilao = (int) dados.get("idLeilao");
-                int idCliente = (int) dados.get("idCliente");
+                int leilaoId = (int) dados.get("leilaoId");
+                int clienteId = (int) dados.get("clienteId");
                 double valor = ((Number) dados.get("valor")).doubleValue();
 
-                pagamentoService.solicitarPagamento(new PagamentoRequest(idLeilao, idCliente, valor));
+                pagamentoService.solicitarPagamento(new PagamentoRequest(leilaoId, clienteId, valor));
             }
         } catch (Exception e) {
             System.err.println("[MSPagamento] Erro ao processar mensagem: " + e.getMessage());
