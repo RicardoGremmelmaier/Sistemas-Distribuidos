@@ -1,11 +1,13 @@
 package com.leilao.ms_pagamento.messaging;
 
+import com.leilao.ms_pagamento.model.Evento;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.leilao.ms_pagamento.model.DadosVencedor;
 import com.leilao.ms_pagamento.model.PagamentoRequest;
 import com.leilao.ms_pagamento.service.PagamentoService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
-import java.util.Map;
 
 @Component
 public class PagamentoSubscriber {
@@ -20,15 +22,15 @@ public class PagamentoSubscriber {
     @RabbitListener(queues = "mspagamento.queue")
     public void receberMensagem(String mensagem) {
         try {
-            Map<?, ?> event = mapper.readValue(mensagem, Map.class);
-            if ("leilao_vencedor".equals(event.get("tipo"))) {
-                Map<?, ?> dados = (Map<?, ?>) event.get("dados");
+            Evento evento = mapper.readValue(mensagem, Evento.class);
+            if ("leilao_vencedor".equals(evento.getTipo())) {
+                DadosVencedor dados = mapper.convertValue(evento.getDados(), DadosVencedor.class);
 
-                int leilaoId = (int) dados.get("leilaoId");
-                int clienteId = (int) dados.get("clienteId");
-                double valor = ((Number) dados.get("valor")).doubleValue();
+                System.out.println("[MSPagamento] Processando pagamento para leilão " + dados.getLeilaoId());
+                System.out.println("Vencedor: " + dados.getVencedorId() + " | Valor: " + dados.getValor());
 
-                pagamentoService.solicitarPagamento(new PagamentoRequest(leilaoId, clienteId, valor));
+
+                pagamentoService.solicitarPagamento(new PagamentoRequest(dados.getLeilaoId(), dados.getVencedorId(), dados.getValor()));
             }
         } catch (Exception e) {
             System.err.println("[MSPagamento] Erro ao processar mensagem: " + e.getMessage());
