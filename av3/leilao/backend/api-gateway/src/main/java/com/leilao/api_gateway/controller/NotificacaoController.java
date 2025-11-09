@@ -1,6 +1,5 @@
 package com.leilao.api_gateway.controller;
 
-import com.leilao.api_gateway.model.Evento;
 import com.leilao.api_gateway.service.NotificationService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -30,11 +29,5 @@ public class NotificacaoController {
     public void cancelar(@PathVariable Integer leilaoId) {
         service.cancelarNotificacoesDeLeilao(leilaoId);
     }
-
-    @PostMapping("/teste/{leilaoId}")
-    public void enviarTeste(@PathVariable Integer leilaoId, @RequestBody Evento evento) {
-        service.notificarLeilao(leilaoId, evento);
-    }
-
 
 }
