@@ -25,4 +25,13 @@ public class MsLanceController {
         else
             return ResponseEntity.badRequest().body(resultado);
     }
+
+    @GetMapping("/maior/{leilaoId}")
+    public ResponseEntity<Double> getMaiorLance(@PathVariable int leilaoId) {
+    Double maior = service.getMaiorLance(leilaoId);
+    if (maior == null) {
+        return ResponseEntity.noContent().build();
+    }
+    return ResponseEntity.ok(maior);
+}
 }

@@ -39,4 +39,8 @@ public class MsLanceService {
         }
         return resultado;
     }
+
+    public Double getMaiorLance(int leilaoId) {
+        return validator.getMaiorLance(leilaoId);
+    }
 }
