@@ -1,8 +1,8 @@
 'use client';
 
-import { Card, Text, Button, Group, Stack } from '@mantine/core';
-import Link from 'next/link';
+import { Title, Card, Text, Stack } from '@mantine/core';
 
+import { GradientButton } from './GradientButton';
 interface Leilao {
   id: number;
   nomeProduto: string;
@@ -16,29 +16,23 @@ export function LeilaoCard({ leilao }: { leilao: Leilao }) {
   return (
     <Card shadow="sm" radius="md" withBorder>
       <Stack gap="xs">
-        <Text fw={600} size="lg">
+        <Title order={3}>
           {leilao.nomeProduto}
-        </Text>
-        <Text size="sm" c="dimmed" lineClamp={2}>
+        </Title>
+        <Text size="sm"  lineClamp={2}>
           {leilao.descricao}
         </Text>
-        <Text size="sm" fw={500}>
+        <Text size="sm" >
           Valor inicial: R$ {leilao.valorInicial.toFixed(2)}
         </Text>
-        <Text size="xs" c="dimmed">
+        <Text size="sm" >
           Início: {new Date(leilao.dataInicio).toLocaleString('pt-BR')}
         </Text>
-        <Text size="xs" c="dimmed">
+        <Text size="sm" >
           Fim: {new Date(leilao.dataFim).toLocaleString('pt-BR')}
         </Text>
 
-        <Group justify="flex-end" mt="sm">
-          <Link href={`/leilao/${leilao.id}`}>
-            <Button variant="filled" color="brand.5" size="compact-md">
-              Ver detalhes
-            </Button>
-          </Link>
-        </Group>
+        <GradientButton text='Ver detalhes' onClick={() => console.log(`Ver detalhes do leilão ${leilao.id}`)}/>
       </Stack>
     </Card>
   );

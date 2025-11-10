@@ -1,26 +1,18 @@
 'use client';
 
-import { Group, Text, Button, Container } from '@mantine/core';
-import Link from 'next/link';
+import { Group, Burger, Title } from '@mantine/core';
+import { GradientButton } from './GradientButton';
+import { useDisclosure } from '@mantine/hooks';
+
 
 export function Header() {
-  return (
-    <Container size="lg" py="sm">
-      <Group justify="space-between" align="center">
-        <Link href="/">
-          <Text size="xl" fw={600} c="brand.6">
-            Sistema de Leilões
-          </Text>
-        </Link>
+  const [opened, { toggle }] = useDisclosure();
 
-        <Group>
-          <Link href="/notificacoes">
-            <Button variant="light" color="brand.5">
-              Notificações
-            </Button>
-          </Link>
-        </Group>
-      </Group>
-    </Container>
+  return (
+    <Group h="100%" px="md" justify="space-between" gap="xl">
+      <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
+      <Title order={2}>Sistema de Leilões</Title>
+      <GradientButton text='Notificações'></GradientButton>
+    </Group>
   );
 }

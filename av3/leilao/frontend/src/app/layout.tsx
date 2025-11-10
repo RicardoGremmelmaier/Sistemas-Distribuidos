@@ -1,33 +1,25 @@
 'use client';
 
-import { MantineProvider, AppShell, Container } from '@mantine/core';
-import { Header } from '@/components/Header';
-import { theme } from '@/styles/theme';
+import '@mantine/core/styles.css';
 import '@/styles/globals.css';
 
+import { MantineProvider, AppShell, Container } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+
+import { Header } from '@/components/Header';
+import { theme } from '@/styles/theme';
+import { BasicAppShell } from '@/components/BasicAppShell';
+
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
+    const [mobileOpened, {toggle: toggleMobile}] = useDisclosure();
+    const [desktopOpened, {toggle: toggleDesktop}] = useDisclosure(true);   
+
+    return (
     <html lang="pt-BR">
       <body>
         <MantineProvider theme={theme}>
-          <AppShell
-            header={{ height: 60 }}
-            padding="md"
-            styles={{
-              main: {
-                backgroundColor: '#f8f9fa',
-                minHeight: '100vh',
-              },
-            }}
-          >
-            <AppShell.Header>
-              <Header />
-            </AppShell.Header>
-
-            <AppShell.Main>
-              <Container size="md">{children}</Container>
-            </AppShell.Main>
-          </AppShell>
+          <BasicAppShell> {children} </BasicAppShell>
         </MantineProvider>
       </body>
     </html>
