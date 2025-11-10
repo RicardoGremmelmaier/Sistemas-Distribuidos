@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/lances")
+@CrossOrigin(origins = "*")
 public class LanceController {
 
     @Autowired

@@ -9,6 +9,7 @@ import java.util.Collection;
 
 @RestController
 @RequestMapping("/leiloes")
+@CrossOrigin(origins = "*")
 public class MsLeilaoController {
 
     private final MsLeilaoService service;
