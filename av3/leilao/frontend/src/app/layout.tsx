@@ -1,6 +1,7 @@
 'use client';
 
 import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
 import '@/styles/globals.css';
 
 import { MantineProvider } from '@mantine/core';
