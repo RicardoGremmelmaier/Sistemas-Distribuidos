@@ -6,7 +6,7 @@ import com.leilao.ms_leilao.model.Leilao;
 import com.leilao.ms_leilao.model.LeilaoStatus;
 import org.springframework.stereotype.Service;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,7 +29,7 @@ public class MsLeilaoService {
     }
 
     public Leilao criarLeilao(Leilao input) {
-        int id = input.getId() == 0 ? idGenerator.getAndIncrement() : input.getId();
+        Integer id = (input.getId() == null) ? idGenerator.getAndIncrement() : input.getId();
         input.setId(id);
         input.setStatus(LeilaoStatus.PENDENTE);
 
@@ -39,7 +39,7 @@ public class MsLeilaoService {
 
         leiloes.put(id, input);
 
-        OffsetDateTime now = OffsetDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
         if (!input.getDataInicio().isAfter(now)) {
             ativarLeilao(input);
         } else {
@@ -47,7 +47,7 @@ public class MsLeilaoService {
         }
         schedulerService.agendarFim(input.getId(), input.getDataFim());
 
-        System.out.println("Leilão criado: id=" + id + " nome=" + input.getNomeProduto());
+        System.out.println("Leilão criado: id=" + id + " nome=" + input.getNomeDoProduto());
         return input;
     }
 
@@ -60,7 +60,7 @@ public class MsLeilaoService {
                         "Leilão iniciado: " + leilao.getId(),
                         Map.of(
                                 "leilaoId", leilao.getId(),
-                                "nomeProduto", leilao.getNomeProduto(),
+                                "nomeDoProduto", leilao.getNomeDoProduto(),
                                 "dataInicio", leilao.getDataInicio().toString(),
                                 "dataFim", leilao.getDataFim().toString()
                         )

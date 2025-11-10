@@ -7,9 +7,9 @@ import { Title, Card, Text, Stack } from '@mantine/core';
 import { GradientButton } from './GradientButton';
 interface Leilao {
   id: number;
-  nomeProduto: string;
+  nomeDoProduto: string;
   descricao: string;
-  valorInicial: number;
+  lanceInicial: number;
   dataInicio: string;
   dataFim: string;
 }
@@ -21,13 +21,13 @@ export function LeilaoCard({ leilao }: { leilao: Leilao }) {
     <Card shadow="sm" radius="md" withBorder>
       <Stack gap="xs">
         <Title order={3}>
-          {leilao.nomeProduto}
+          {leilao.nomeDoProduto}
         </Title>
         <Text size="sm"  lineClamp={2}>
           {leilao.descricao}
         </Text>
         <Text size="sm" >
-          Valor inicial: R$ {leilao.valorInicial.toFixed(2)}
+          Valor inicial: R$ {leilao.lanceInicial.toFixed(2)}
         </Text>
         <Text size="sm" >
           Início: {new Date(leilao.dataInicio).toLocaleString('pt-BR')}

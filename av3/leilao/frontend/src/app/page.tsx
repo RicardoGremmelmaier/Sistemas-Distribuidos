@@ -7,9 +7,9 @@ import axios from 'axios';
 
 interface Leilao {
   id: number;
-  nomeProduto: string;
+  nomeDoProduto: string;
   descricao: string;
-  valorInicial: number;
+  lanceInicial: number;
   dataInicio: string;
   dataFim: string;
 }

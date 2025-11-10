@@ -11,9 +11,9 @@ import dayjs from 'dayjs';
 
 export default function CriarLeilaoPage() {
   const [formData, setFormData] = useState({
-    nomeProduto: '',
+    nomeDoProduto: '',
     descricao: '',
-    valorInicial: 0,
+    lanceInicial: 0,
     dataInicio: new Date(),
     dataFim: new Date(),
   });
@@ -28,11 +28,11 @@ export default function CriarLeilaoPage() {
     setLoading(true);
 
     const payload = {
-        nomeProduto: formData.nomeProduto,
+        nomeDoProduto: formData.nomeDoProduto,
         descricao: formData.descricao,
-        valorInicial: formData.valorInicial,
-        dataInicio: dayjs(formData.dataInicio).format('YYYY-MM-DDTHH:mm:ssZ'),
-        dataFim: dayjs(formData.dataFim).format('YYYY-MM-DDTHH:mm:ssZ'),
+        lanceInicial: formData.lanceInicial,
+        dataInicio: dayjs(formData.dataInicio).format('YYYY-MM-DDTHH:mm:ss'),
+        dataFim: dayjs(formData.dataFim).format('YYYY-MM-DDTHH:mm:ss'),
     };
 
 
@@ -44,9 +44,9 @@ export default function CriarLeilaoPage() {
         color: 'green',
       });
       setFormData({
-        nomeProduto: '',
+        nomeDoProduto: '',
         descricao: '',
-        valorInicial: 0,
+        lanceInicial: 0,
         dataInicio: new Date(),
         dataFim: new Date(),
       });
@@ -82,8 +82,8 @@ export default function CriarLeilaoPage() {
           <TextInput
             label="Nome do Produto"
             placeholder="Ex: PlayStation 5"
-            value={formData.nomeProduto}
-            onChange={(e) => handleChange('nomeProduto', e.currentTarget.value)}
+            value={formData.nomeDoProduto}
+            onChange={(e) => handleChange('nomeDoProduto', e.currentTarget.value)}
             required
             mb="sm"
           />
@@ -100,8 +100,8 @@ export default function CriarLeilaoPage() {
           <NumberInput
             label="Valor inicial (R$)"
             prefix='R$ '
-            value={formData.valorInicial}
-            onChange={(v) => handleChange('valorInicial', v || 0)}
+            value={formData.lanceInicial}
+            onChange={(v) => handleChange('lanceInicial', v || 0)}
             min={0}
             decimalScale={2}
             fixedDecimalScale
