@@ -20,4 +20,14 @@ public class LanceController {
         return ResponseEntity.ok("Lance enviado com sucesso para o MS Lance");
     }
 
+    @GetMapping("/maior/{leilaoId}")
+    public ResponseEntity<Double> getMaiorLance(@PathVariable int leilaoId) {
+        Double maiorLance = lanceService.getMaiorLance(leilaoId);
+        if (maiorLance != null) {
+            return ResponseEntity.ok(maiorLance);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }

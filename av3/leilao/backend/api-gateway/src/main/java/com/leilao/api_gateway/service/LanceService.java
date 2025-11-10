@@ -22,5 +22,13 @@ public class LanceService {
                 .bodyToMono(Void.class)
                 .subscribe();
     }
+
+    public Double getMaiorLance(int leilaoId) {
+        return webClient.get()
+                .uri("/lances/maior/{leilaoId}", leilaoId)
+                .retrieve()
+                .bodyToMono(Double.class)
+                .block();
+    }
     
 }
