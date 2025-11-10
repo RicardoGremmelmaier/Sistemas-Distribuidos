@@ -19,13 +19,18 @@ export function LeilaoCard({ leilao }: { leilao: Leilao }) {
 
   return (
     <Card shadow="sm" radius="md" withBorder>
-      <Stack gap="xs">
-        <Title order={3}>
-          {leilao.nomeDoProduto}
-        </Title>
-        <Text size="sm"  lineClamp={2}>
-          {leilao.descricao}
-        </Text>
+      <Card.Section withBorder inheritPadding py="xs">
+        <Stack gap="xs">
+          <Title order={3}>
+            {leilao.nomeDoProduto}
+          </Title>
+          <Text size="sm"  lineClamp={2}>
+            {leilao.descricao}
+          </Text>
+        </Stack>
+      </Card.Section>
+
+      <Stack gap="xs" mt="md">
         <Text size="sm" >
           Valor inicial: R$ {leilao.lanceInicial.toFixed(2)}
         </Text>

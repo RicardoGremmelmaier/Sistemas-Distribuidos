@@ -122,10 +122,14 @@ export default function LeilaoDetalhesPage() {
       />
 
       <Card shadow="sm" radius="md" withBorder className="w-[600px]">
+        <Card.Section withBorder inheritPadding py="xs">
         <Stack>
           <Title order={1}>{leilao.nomeDoProduto}</Title>
           <Text size='lg'>{leilao.descricao}</Text>
+        </Stack>
+        </Card.Section>
 
+        <Stack gap="xs" mt="md">
           <Group grow>
             <Text size='sm'>Status: {leilao.status}</Text>
             <Text size='sm'>Valor inicial: R$ {leilao.lanceInicial.toFixed(2)}</Text>
