@@ -1,5 +1,7 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+
 import { Title, Card, Text, Stack } from '@mantine/core';
 
 import { GradientButton } from './GradientButton';
@@ -13,6 +15,8 @@ interface Leilao {
 }
 
 export function LeilaoCard({ leilao }: { leilao: Leilao }) {
+  const router = useRouter();
+
   return (
     <Card shadow="sm" radius="md" withBorder>
       <Stack gap="xs">
@@ -32,7 +36,7 @@ export function LeilaoCard({ leilao }: { leilao: Leilao }) {
           Fim: {new Date(leilao.dataFim).toLocaleString('pt-BR')}
         </Text>
 
-        <GradientButton text='Ver detalhes' onClick={() => console.log(`Ver detalhes do leilão ${leilao.id}`)}/>
+        <GradientButton text='Ver detalhes' onClick={() => router.push(`/leilao/${leilao.id}`)}/>
       </Stack>
     </Card>
   );
