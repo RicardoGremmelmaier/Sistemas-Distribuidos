@@ -30,4 +30,9 @@ public class NotificacaoController {
         service.cancelarNotificacoesDeLeilao(leilaoId);
     }
 
+    @GetMapping("/inscrito/{leilaoId}/{clienteId}")
+        public boolean isInscrito(@PathVariable Integer leilaoId, @PathVariable Integer clienteId) {
+        return service.isInscrito(leilaoId, clienteId);
+    }
+
 }

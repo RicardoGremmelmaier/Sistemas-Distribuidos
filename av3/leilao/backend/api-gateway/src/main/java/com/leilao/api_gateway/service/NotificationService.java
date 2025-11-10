@@ -54,4 +54,8 @@ public class NotificationService {
         });
     }
     
+    public boolean isInscrito(Integer leilaoId, Integer clienteId) {
+        Map<Integer, SseEmitter> emitters = registry.getEmittersPorLeilao(leilaoId);
+        return emitters.containsKey(clienteId);
+    }
 }
