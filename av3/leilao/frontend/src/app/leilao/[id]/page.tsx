@@ -1,12 +1,14 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
+import { useDisclosure } from '@mantine/hooks';
 
 import { Card, Title, Text, Group, Button, Stack, Loader } from '@mantine/core';
 
 import { NotificationBanner } from '@/components/NotificationBanner';
 import { GradientButton } from '@/components/GradientButton';
+import { LanceModal } from '@/components/LanceModal';
 
 import axios from 'axios';
 
@@ -25,7 +27,6 @@ export default function LeilaoDetalhesPage() {
   const leilaoId = Number(id);
   const clienteId = 1; // fixo por enquanto
   const eventSourceRef = useRef<EventSource | null>(null);
-  const router = useRouter();
 
   const [leilao, setLeilao] = useState<Leilao | null>(null);
   const [maiorLance, setMaiorLance] = useState<number | null>(null);
@@ -38,6 +39,8 @@ export default function LeilaoDetalhesPage() {
     message: '',
   });
 
+  const [modalOpened, { open: openModal, close: closeModal }] = useDisclosure(false);
+
   const showNotification = (type: 'success' | 'error' | 'warning' | 'info', message: string) => {
     setNotif({ visible: true, type, message });
   };
@@ -47,8 +50,10 @@ export default function LeilaoDetalhesPage() {
       try {
         const leilaoRes = await axios.get<Leilao>(`http://localhost:8080/leiloes/${leilaoId}`);
         const lanceRes = await axios.get<number>(`http://localhost:8080/lances/maior/${leilaoId}`);
+        const inscRes = await axios.get<boolean>(`http://localhost:8080/notificacoes/inscrito/${leilaoId}/${clienteId}`);
         setLeilao(leilaoRes.data);
         setMaiorLance(lanceRes.data || leilaoRes.data.lanceInicial);
+        setInscrito(inscRes.data);
       } catch (err) {
         showNotification('error', 'Erro ao carregar os dados do leilão.');
         console.error(err);
@@ -121,6 +126,8 @@ export default function LeilaoDetalhesPage() {
         onClose={() => setNotif({ ...notif, visible: false })}
       />
 
+      <LanceModal opened={modalOpened} onClose={closeModal} clienteId={clienteId} leilaoId={leilaoId} />
+
       <Card shadow="sm" radius="md" withBorder className="w-[600px]">
         <Card.Section withBorder inheritPadding py="xs">
         <Stack>
@@ -151,7 +158,7 @@ export default function LeilaoDetalhesPage() {
             >
             {inscrito ? 'Parar notificações' : 'Receber notificações'}
           </Button>
-            <GradientButton text='Dar Lance' onClick={() => router.push(`/lances/${leilao.id}`)}></GradientButton>
+            <GradientButton text='Dar Lance' onClick={openModal}></GradientButton>
           </Group>
 
         </Stack>
