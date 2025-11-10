@@ -33,4 +33,13 @@ public class LeilaoService {
                 .block();
     }
 
+    public Object getLeilao(int leilaoId) {
+        return webClient.get()
+                .uri("/leiloes/{id}", leilaoId)
+                .retrieve()
+                .bodyToMono(Object.class)
+                .onErrorResume(e -> Mono.just("Erro ao consultar leilão: " + e.getMessage()))
+                .block();
+    }
+
 }

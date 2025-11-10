@@ -25,4 +25,9 @@ public class LeilaoController {
         return ResponseEntity.ok(leilaoService.listarLeiloes());
     }
 
+    @GetMapping("/{leilaoId}")
+    public ResponseEntity<Object> getLeilao(@PathVariable int leilaoId) {
+        return ResponseEntity.ok(leilaoService.getLeilao(leilaoId));
+    }
+
 }
