@@ -3,17 +3,13 @@
 import '@mantine/core/styles.css';
 import '@/styles/globals.css';
 
-import { MantineProvider, AppShell, Container } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { MantineProvider } from '@mantine/core';
 
-import { Header } from '@/components/Header';
 import { theme } from '@/styles/theme';
 import { BasicAppShell } from '@/components/BasicAppShell';
 
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-    const [mobileOpened, {toggle: toggleMobile}] = useDisclosure();
-    const [desktopOpened, {toggle: toggleDesktop}] = useDisclosure(true);   
+export default function RootLayout({ children }: { children: React.ReactNode }) {   
 
     return (
     <html lang="pt-BR">

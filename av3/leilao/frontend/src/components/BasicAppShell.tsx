@@ -1,7 +1,8 @@
 import { useDisclosure } from '@mantine/hooks';
 
-import { AppShell, Group, Burger} from '@mantine/core';
+import { AppShell} from '@mantine/core';
 import { Header } from './Header';
+import { CustomNavLink } from './NavLink';
 
 export function BasicAppShell({ children }: { children: React.ReactNode }) {
   const [opened, { toggle }] = useDisclosure();
@@ -16,7 +17,7 @@ export function BasicAppShell({ children }: { children: React.ReactNode }) {
         <Header />
       </AppShell.Header>
       <AppShell.Navbar p='sm'>
-
+        <CustomNavLink />
       </AppShell.Navbar>
       <AppShell.Main>
         {children}
