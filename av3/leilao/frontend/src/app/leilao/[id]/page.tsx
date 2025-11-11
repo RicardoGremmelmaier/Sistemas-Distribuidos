@@ -172,6 +172,7 @@ export default function LeilaoDetalhesPage() {
         clienteId={clienteId}
         leilaoId={leilaoId}
         onLanceSuccess={fetchData}
+        onNotify={showNotification}
       />
 
       <Card shadow="sm" radius="md" withBorder className="w-[600px]">

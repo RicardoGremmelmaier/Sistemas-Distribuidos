@@ -6,6 +6,7 @@ import { GradientButton } from './GradientButton';
 import { NotificationBanner } from './NotificationBanner';
 
 import axios from 'axios';
+import { on } from 'events';
 
 interface LanceModalProps {
   opened: boolean;
@@ -13,9 +14,10 @@ interface LanceModalProps {
   clienteId: number;
   leilaoId: number;
   onLanceSuccess: () => void;
+  onNotify: (type: 'success' | 'error' | 'warning' | 'info', message: string) => void;
 }
 
-export function LanceModal({ opened, onClose, clienteId, leilaoId, onLanceSuccess }: LanceModalProps) {
+export function LanceModal({ opened, onClose, clienteId, leilaoId, onLanceSuccess, onNotify }: LanceModalProps) {
     const [formData, setFormData] = useState({
         clienteId: clienteId,
         leilaoId: leilaoId,
@@ -48,24 +50,14 @@ export function LanceModal({ opened, onClose, clienteId, leilaoId, onLanceSucces
         try {
             await axios.post('http://localhost:8080/lances', payload);
 
-            setNotification({
-                type: 'success',
-                message: 'Lance realizado com sucesso!',
-                visible: true,
-            });
+            onNotify('success', 'Lance realizado com sucesso!');
             onLanceSuccess();
 
             onClose();
 
             } catch (error: any) {
             console.error('Erro ao realizar valor:', error);
-            setNotification({
-                type: 'error',
-                message:
-                error.response?.data?.message ||
-                'Falha ao realizar o valor. Verifique os dados e tente novamente.',
-                visible: true,
-            });
+            onNotify('error', error.response?.data?.message || 'Erro ao realizar lance.');
         }
     };
 
