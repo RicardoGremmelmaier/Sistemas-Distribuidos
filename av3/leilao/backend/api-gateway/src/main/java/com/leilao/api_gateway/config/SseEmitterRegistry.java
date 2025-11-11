@@ -30,6 +30,14 @@ public class SseEmitterRegistry {
         return emittersPorLeilao.getOrDefault(leilaoId, Map.of());
     }
 
+    public SseEmitter getEmitter(Integer leilaoId, Integer clienteId) {
+        Map<Integer, SseEmitter> clientes = emittersPorLeilao.get(leilaoId);
+        if (clientes != null) {
+            return clientes.get(clienteId);
+        }
+        return null;
+    }
+
     public void removeAllEmittersDoLeilao(Integer leilaoId) {
         emittersPorLeilao.remove(leilaoId);
     }

@@ -54,4 +54,17 @@ public class NotificationService {
         Map<Integer, SseEmitter> emitters = registry.getEmittersPorLeilao(leilaoId);
         return emitters.containsKey(clienteId);
     }
+
+    public void notificarCliente(Integer leilaoId, Integer clienteId, Evento evento) {
+        SseEmitter emitter = registry.getEmitter(leilaoId, clienteId);
+        if (emitter != null) {
+            try {
+                emitter.send(SseEmitter.event()
+                        .name(evento.getTipo())
+                        .data(evento));
+            } catch (IOException e) {
+                registry.removeEmitter(leilaoId, clienteId);
+            }
+        }
+    }
 }
