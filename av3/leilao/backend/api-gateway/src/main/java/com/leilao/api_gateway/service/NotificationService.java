@@ -25,18 +25,15 @@ public class NotificationService {
         emitter.onTimeout(() -> registry.removeEmitter(leilaoId, clienteId));
         emitter.onError((e) -> registry.removeEmitter(leilaoId, clienteId));
 
-        System.out.println("[SSE] Cliente " + clienteId + " registrado no leilão " + leilaoId);
         return emitter;
     }
 
     public void cancelarInscricaoCliente(Integer leilaoId, Integer clienteId) {
         registry.removeEmitter(leilaoId, clienteId);
-        System.out.println("[SSE] Cliente " + clienteId + " cancelou inscrição no leilão " + leilaoId);
     }
 
     public void cancelarNotificacoesDeLeilao(Integer leilaoId) {
         registry.removeAllEmittersDoLeilao(leilaoId);
-        System.out.println("[SSE] Notificações canceladas para o leilão " + leilaoId);
     }
 
     public void notificarLeilao(Integer leilaoId, Evento evento) {
@@ -49,7 +46,6 @@ public class NotificationService {
                         .data(evento));
             } catch (IOException e) {
                 registry.removeEmitter(leilaoId, clienteId);
-                System.err.println("[SSE] Erro ao enviar notificação ao cliente " + clienteId);
             }
         });
     }
