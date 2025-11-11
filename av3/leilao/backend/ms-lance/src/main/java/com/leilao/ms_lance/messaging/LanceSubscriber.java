@@ -36,13 +36,13 @@ public class LanceSubscriber {
                 validator.finalizarLeilao(leilaoId);
 
                 Double valor = validator.getMaiorLance(leilaoId);
-                Integer vencedorId = validator.getVencedor(leilaoId);
+                Integer clienteId = validator.getVencedor(leilaoId);
 
-                if (valor != null && valor > 0 && vencedorId != null) {
+                if (valor != null && valor > 0 && clienteId != null) {
                     EventoLance eventoVencedor = new EventoLance(
                         "leilao_vencedor",
-                        "Leilão " + leilaoId + " finalizado. Vencedor: cliente " + vencedorId,
-                        Map.of("leilaoId", leilaoId, "vencedorId", vencedorId, "valor", valor)
+                        "Leilão " + leilaoId + " finalizado. Vencedor: cliente " + clienteId,
+                        Map.of("leilaoId", leilaoId, "clienteId", clienteId, "valor", valor)
                     );
                     publisher.publish("leilao.vencedor", eventoVencedor);
                     System.out.println("[MSLance] Evento publicado: leilao_vencedor -> " + eventoVencedor);
