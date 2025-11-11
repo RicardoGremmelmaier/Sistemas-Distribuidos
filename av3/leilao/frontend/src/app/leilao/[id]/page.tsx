@@ -75,10 +75,10 @@ export default function LeilaoDetalhesPage() {
   };
 
   useEffect(() => {
-    let storedId = localStorage.getItem("clienteId");
+    let storedId = sessionStorage.getItem("clienteId");
     if (!storedId) {
-      storedId = String(Math.floor(Math.random() * 100));
-      localStorage.setItem("clienteId", storedId);
+      storedId = String(Math.floor(Math.random() * 1_000_000));
+      sessionStorage.setItem("clienteId", storedId);
     }
     setClienteId(Number(storedId));
   }, []);
