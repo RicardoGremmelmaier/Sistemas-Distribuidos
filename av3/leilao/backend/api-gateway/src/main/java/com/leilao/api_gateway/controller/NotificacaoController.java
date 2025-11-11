@@ -4,6 +4,8 @@ import com.leilao.api_gateway.service.NotificationService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import com.leilao.api_gateway.model.Evento;
+
 @RestController
 @RequestMapping("/notificacoes")
 @CrossOrigin(origins = "*")
@@ -33,6 +35,16 @@ public class NotificacaoController {
     @GetMapping("/inscrito/{leilaoId}/{clienteId}")
         public boolean isInscrito(@PathVariable Integer leilaoId, @PathVariable Integer clienteId) {
         return service.isInscrito(leilaoId, clienteId);
+    }
+
+    @PostMapping("/notificar/{leilaoId}/{clienteId}")
+    public void notificarCliente(@PathVariable Integer leilaoId, @PathVariable Integer clienteId, @RequestBody Evento evento) {
+        service.notificarCliente(leilaoId, clienteId, evento);
+    }
+
+    @PostMapping("/notificar/{leilaoId}")
+    public void notificarLeilao(@PathVariable Integer leilaoId, @RequestBody Evento evento) {
+        service.notificarLeilao(leilaoId, evento);
     }
 
 }
