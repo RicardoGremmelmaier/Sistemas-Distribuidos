@@ -27,17 +27,33 @@ public class GatewaySubscriber {
             @SuppressWarnings("unchecked")
             Map<String, Object> dados = (Map<String, Object>) evento.getDados();
 
-            Object leilaoIdObj = dados.get("leilaoId");
-            if (leilaoIdObj == null) {
-                System.err.println("[Gateway] Evento sem leilaoId — ignorado: " + evento.getTipo());
-                return;
+            Integer leilaoId = Integer.parseInt(dados.get("leilaoId").toString());
+            Integer clienteId = dados.get("clienteId") != null
+                    ? Integer.parseInt(dados.get("clienteId").toString())
+                    : null;
+
+            switch (evento.getTipo()) {
+                //Tipos que notificam todos os inscritos no leilão
+                case "leilao_finalizado":
+                case "lance_validado":
+                    notificationService.notificarLeilao(leilaoId, evento);
+                    System.out.println("[Gateway] Notificação enviada para o leilão " + leilaoId);
+                    break;
+
+                //Tipos que notificam um cliente específico
+                case "lance_invalidado":
+                case "leilao_vencedor":
+                case "link_pagamento":
+                case "status_pagamento":
+                    if (clienteId != null) {
+                        notificationService.notificarCliente(leilaoId, clienteId, evento);
+                        System.out.println("[Gateway] Notificação enviada ao cliente " + clienteId);
+                    }
+                    break;
+
+                default:
+                    notificationService.notificarLeilao(leilaoId, evento);
             }
-
-            Integer leilaoId = (leilaoIdObj instanceof Integer)
-                    ? (Integer) leilaoIdObj
-                    : Integer.parseInt(leilaoIdObj.toString());
-
-            notificationService.notificarLeilao(leilaoId, evento);
 
         } catch (Exception e) {
             System.err.println("[Gateway] Erro ao processar mensagem: " + e.getMessage());
