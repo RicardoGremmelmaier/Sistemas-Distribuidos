@@ -1,10 +1,10 @@
 package com.leilao.ms_pagamento.service;
-
 import com.leilao.ms_pagamento.messaging.PagamentoPublisher;
 import com.leilao.ms_pagamento.model.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.ResponseEntity;
 import java.util.Map;
-import java.util.UUID;
 
 @Service
 public class PagamentoService {
@@ -16,24 +16,45 @@ public class PagamentoService {
     }
 
     public PagamentoResponse solicitarPagamento (PagamentoRequest request){
-        String fakeLink = "https://pagamentos.externo.com/pagar/" + UUID.randomUUID();
+        RestTemplate restTemplate = new RestTemplate();
 
-        PagamentoResponse response = new PagamentoResponse(fakeLink, StatusPagamento.PENDENTE);
-
-        EventoPagamento evento = new EventoPagamento(
-            "link_pagamento",
-            "Link gerado para o pagamento do leilão " + request.getLeilaoId(),
-            Map.of(
-                    "leilaoId", request.getLeilaoId(),
-                    "clienteId", request.getClienteId(),
-                    "valor", request.getValor(),
-                    "link", fakeLink
-            )
+        Map<String, Object> payload = Map.of(
+            "leilaoId", request.getLeilaoId(),
+            "valor", request.getValor(),
+            "clienteId", Map.of("clienteId", request.getClienteId())
         );
 
-        publisher.publish("link.pagamento", evento);
+        try {
+                ResponseEntity<Map> res = restTemplate.postForEntity(
+                        "http://localhost:8083/external-payment/create",
+                        payload,
+                        Map.class
+                );
 
-        return response;
+            Map body = res.getBody();
+            String link = (String) body.get("linkPagamento");
+
+            PagamentoResponse response = new PagamentoResponse(link, StatusPagamento.PENDENTE);
+
+            EventoPagamento evento = new EventoPagamento(
+                "link_pagamento",
+                "Link gerado para o pagamento do leilão " + request.getLeilaoId(),
+                Map.of(
+                        "leilaoId", request.getLeilaoId(),
+                        "clienteId", request.getClienteId(),
+                        "valor", request.getValor(),
+                        "link", link
+                )
+            );
+
+            publisher.publish("link.pagamento", evento);
+
+            return response;
+
+        } catch (Exception e) {
+            System.err.println("[PagamentoService] Erro ao chamar sistema externo: " + e.getMessage());
+            throw new RuntimeException("Falha ao solicitar pagamento externo", e);
+        }
     }
 
     public void atualizarStatusPagamento (int leilaoId, StatusPagamento status){

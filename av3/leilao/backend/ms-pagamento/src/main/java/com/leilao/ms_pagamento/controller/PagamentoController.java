@@ -17,9 +17,11 @@ public class PagamentoController {
 
     @PostMapping("/callback")
     public ResponseEntity<String> callback(@RequestBody CallbackRequest req) {
+        System.out.println("[Callback recebido] Leilão: " + req.getLeilaoId() + " | Status: " + req.getStatus());
         pagamentoService.atualizarStatusPagamento(req.getLeilaoId(), req.getStatus());
         return ResponseEntity.ok("Status processado com sucesso");
     }
+
 
     // Classe interna apenas para simplificar o payload do callback
     public static class CallbackRequest {

@@ -27,10 +27,10 @@ public class PagamentoSubscriber {
                 DadosVencedor dados = mapper.convertValue(evento.getDados(), DadosVencedor.class);
 
                 System.out.println("[MSPagamento] Processando pagamento para leilão " + dados.getLeilaoId());
-                System.out.println("Vencedor: " + dados.getVencedorId() + " | Valor: " + dados.getValor());
+                System.out.println("Vencedor: " + dados.getClienteId() + " | Valor: " + dados.getValor());
 
 
-                pagamentoService.solicitarPagamento(new PagamentoRequest(dados.getLeilaoId(), dados.getVencedorId(), dados.getValor()));
+                pagamentoService.solicitarPagamento(new PagamentoRequest(dados.getLeilaoId(), dados.getClienteId(), dados.getValor()));
             }
         } catch (Exception e) {
             System.err.println("[MSPagamento] Erro ao processar mensagem: " + e.getMessage());
