@@ -12,13 +12,14 @@ interface LanceModalProps {
   onClose: () => void;
   clienteId: number;
   leilaoId: number;
+  onLanceSuccess: () => void;
 }
 
-export function LanceModal({ opened, onClose, clienteId, leilaoId }: LanceModalProps) {
+export function LanceModal({ opened, onClose, clienteId, leilaoId, onLanceSuccess }: LanceModalProps) {
     const [formData, setFormData] = useState({
         clienteId: clienteId,
         leilaoId: leilaoId,
-        lance: 0,
+        valor: 0,
     });
 
     const [notification, setNotification] = useState<{
@@ -41,7 +42,7 @@ export function LanceModal({ opened, onClose, clienteId, leilaoId }: LanceModalP
         const payload = {
             clienteId: formData.clienteId,
             leilaoId: formData.leilaoId,
-            lance: formData.lance,
+            valor: formData.valor,
         };
 
         try {
@@ -52,19 +53,17 @@ export function LanceModal({ opened, onClose, clienteId, leilaoId }: LanceModalP
                 message: 'Lance realizado com sucesso!',
                 visible: true,
             });
+            onLanceSuccess();
 
-            setFormData({
-                clienteId: clienteId,
-                leilaoId: leilaoId,
-                lance: 0,
-            });
+            onClose();
+
             } catch (error: any) {
-            console.error('Erro ao realizar lance:', error);
+            console.error('Erro ao realizar valor:', error);
             setNotification({
                 type: 'error',
                 message:
                 error.response?.data?.message ||
-                'Falha ao realizar o lance. Verifique os dados e tente novamente.',
+                'Falha ao realizar o valor. Verifique os dados e tente novamente.',
                 visible: true,
             });
         }
@@ -81,24 +80,30 @@ export function LanceModal({ opened, onClose, clienteId, leilaoId }: LanceModalP
             <Modal opened={opened} onClose={onClose} title="Dar Lance" centered>
                 <Stack>
                     <form onSubmit={handleSubmit}>
-                    <NumberInput
-                        label="Valor (R$)"
-                        prefix="R$ "
-                        value={formData.lance}
-                        onChange={(v) => handleChange('lance', v || 0)}
-                        min={0}
-                        decimalScale={2}
-                        fixedDecimalScale
-                        thousandSeparator=" "
-                        allowNegative={false}
-                        mb="sm"
-                        required
-                    />
+                        <NumberInput
+                            label="Valor (R$)"
+                            prefix="R$ "
+                            value={formData.valor}
+                            onChange={(v) => handleChange('valor', v || 0)}
+                            min={0}
+                            decimalScale={2}
+                            fixedDecimalScale
+                            thousandSeparator=" "
+                            allowNegative={false}
+                            mb="sm"
+                            required
+                        />
+                        <Group grow>
+                            <GradientButton text='Confirmar Lance' type='submit'/>
+                            <Button
+                                variant="gradient"
+                                gradient={{ from: 'red', to: 'orange' , deg: 90}}
+                                onClick={onClose}
+                                >
+                                Cancelar
+                            </Button>
+                        </Group>
                     </form>
-                    <Group grow>
-                        <GradientButton text='Confirmar Lance' onClick={onClose} />
-                        <Button variant="outline" onClick={onClose}>Cancelar</Button>
-                    </Group>
                 </Stack>
             </Modal>
         </>
