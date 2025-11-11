@@ -45,7 +45,6 @@ public class LanceSubscriber {
                         Map.of("leilaoId", leilaoId, "clienteId", clienteId, "valor", valor)
                     );
                     publisher.publish("leilao.vencedor", eventoVencedor);
-                    System.out.println("[MSLance] Evento publicado: leilao_vencedor -> " + eventoVencedor);
                 } else {
                     System.out.println("[MSLance] Nenhum lance válido para o leilão " + leilaoId);
                 }
