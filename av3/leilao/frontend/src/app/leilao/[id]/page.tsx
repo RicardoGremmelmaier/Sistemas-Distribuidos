@@ -171,6 +171,7 @@ export default function LeilaoDetalhesPage() {
         onClose={closeModal}
         clienteId={clienteId}
         leilaoId={leilaoId}
+        valorMinimo={(maiorLance ?? leilao.lanceInicial) + 0.01}
         onLanceSuccess={fetchData}
         onNotify={showNotification}
       />

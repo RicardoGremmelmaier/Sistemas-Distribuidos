@@ -48,7 +48,7 @@ public class ExternalPaymentMockController {
     @Async
     public void simulateAsyncCallback(String idTransacao, int leilaoId, double valor, Map<?, ?> dadosCliente) {
         try {
-            int delay = ThreadLocalRandom.current().nextInt(5000, 10000);
+            int delay = ThreadLocalRandom.current().nextInt(8000, 12000);
             Thread.sleep(delay);
 
             StatusPagamento status = ThreadLocalRandom.current().nextBoolean()
