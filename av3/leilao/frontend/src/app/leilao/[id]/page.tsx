@@ -89,7 +89,6 @@ export default function LeilaoDetalhesPage() {
     }
   }, [leilaoId, clienteId]);
 
-  // Funções SSE
   const inscrever = () => {
     if (eventSourceRef.current) return;
 
@@ -98,15 +97,50 @@ export default function LeilaoDetalhesPage() {
     );
     eventSourceRef.current = es;
     setInscrito(true);
+
     showNotification(
       "success",
       "Você está recebendo notificações deste leilão."
     );
 
-    es.onmessage = (event) => {
-      console.log("Evento SSE recebido:", event.data);
-      showNotification("info", `Novo evento: ${event.data}`);
+    // Escuta eventos nomeados do backend
+    es.addEventListener("lance_validado", (event) => {
+      const data = JSON.parse(event.data);
+      console.log("Lance validado:", data);
+      showNotification("success", `Novo lance aceito: R$ ${data.dados.valor}`);
       fetchData();
+    });
+
+    es.addEventListener("lance_invalidado", (event) => {
+      const data = JSON.parse(event.data);
+      console.warn("Lance inválido:", data);
+      showNotification("warning", `Seu lance foi rejeitado: ${data.mensagem}`);
+    });
+
+    es.addEventListener("leilao_vencedor", (event) => {
+      const data = JSON.parse(event.data);
+      showNotification("success", `Você venceu o leilão!`);
+    });
+
+    es.addEventListener("leilao_finalizado", (event) => {
+      const data = JSON.parse(event.data);
+      showNotification("info", "O leilão foi finalizado.");
+      fetchData();
+    });
+
+    es.addEventListener("link_pagamento", (event) => {
+      const data = JSON.parse(event.data);
+      showNotification("info", `Link de pagamento gerado: ${data.link}`);
+    });
+
+    es.addEventListener("status_pagamento", (event) => {
+      const data = JSON.parse(event.data);
+      showNotification("info", `Status do pagamento: ${data.status}`);
+    });
+
+    // Fallback para mensagens genéricas (sem .name())
+    es.onmessage = (event) => {
+      console.log("Evento SSE genérico:", event.data);
     };
 
     es.onerror = (error) => {
@@ -171,7 +205,7 @@ export default function LeilaoDetalhesPage() {
         onClose={closeModal}
         clienteId={clienteId}
         leilaoId={leilaoId}
-        valorMinimo={(maiorLance ?? leilao.lanceInicial) + 0.01}
+        valorMinimo={maiorLance ?? leilao.lanceInicial}
         onLanceSuccess={fetchData}
         onNotify={showNotification}
       />
