@@ -130,12 +130,12 @@ export default function LeilaoDetalhesPage() {
 
     es.addEventListener("link_pagamento", (event) => {
       const data = JSON.parse(event.data);
-      showNotification("info", `Link de pagamento gerado: ${data.link}`);
+      showNotification("info", `Link de pagamento gerado: ${data.dados.link}`);
     });
 
     es.addEventListener("status_pagamento", (event) => {
       const data = JSON.parse(event.data);
-      showNotification("info", `Status do pagamento: ${data.status}`);
+      showNotification("info", `Status do pagamento: ${data.dados.status}`);
     });
 
     // Fallback para mensagens genéricas (sem .name())
