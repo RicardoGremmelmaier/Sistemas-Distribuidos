@@ -12,7 +12,8 @@ export default function ExternalPaymentPage() {
   const searchParams = useSearchParams();
 
   const leilaoId = Number(searchParams.get('leilaoId'));
-  const valor = Number(searchParams.get('valor'));
+  const rawValor = searchParams.get("valor");
+  const valor = rawValor? Number(rawValor.replace(',', '.')) : 0.0;
   const clienteId = Number(searchParams.get('clienteId'));
 
   const [status, setStatus] = useState<'PENDENTE' | 'APROVADO' | 'RECUSADO'>('PENDENTE');
@@ -45,7 +46,7 @@ export default function ExternalPaymentPage() {
           <Text>Valor: R$ {valor.toFixed(2)}</Text>
           <Text>Cliente: {clienteId}</Text>
 
-          <Group mt="md">
+          <Group mt="md" grow>
             <GradientButton
               text='Aprovar'
               gradientType="greenToCyan"
