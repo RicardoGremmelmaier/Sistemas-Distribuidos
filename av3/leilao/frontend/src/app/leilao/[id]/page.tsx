@@ -11,6 +11,7 @@ import { GradientButton } from "@/components/GradientButton";
 import { LanceModal } from "@/components/LanceModal";
 
 import axios from "axios";
+import { extend } from "dayjs";
 
 interface Leilao {
   id: number;
@@ -38,6 +39,7 @@ export default function LeilaoDetalhesPage() {
     visible: false,
     type: "info" as "success" | "error" | "warning" | "info",
     message: "",
+    extend: 4000,
   });
 
   const [modalOpened, { open: openModal, close: closeModal }] =
@@ -45,9 +47,10 @@ export default function LeilaoDetalhesPage() {
 
   const showNotification = (
     type: "success" | "error" | "warning" | "info",
-    message: string
+    message: string,
+    extend?: number
   ) => {
-    setNotif({ visible: true, type, message });
+    setNotif({ visible: true, type, message, extend: extend ?? 4000 });
   };
 
   const fetchData = async () => {
@@ -130,7 +133,7 @@ export default function LeilaoDetalhesPage() {
 
     es.addEventListener("link_pagamento", (event) => {
       const data = JSON.parse(event.data);
-      showNotification("info", `Link de pagamento gerado: ${data.dados.link}`);
+      showNotification("info", `Link de pagamento gerado: ${data.dados.link}`, 10000);
     });
 
     es.addEventListener("status_pagamento", (event) => {

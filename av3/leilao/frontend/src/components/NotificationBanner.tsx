@@ -8,10 +8,11 @@ interface NotificationBannerProps {
   type: 'success' | 'error' | 'warning' | 'info';
   message: string;
   visible: boolean;
+  extend?: number;
   onClose: () => void;
 }
 
-export function NotificationBanner({ type, message, visible, onClose }: NotificationBannerProps) {
+export function NotificationBanner({ type, message, visible, extend = 4000, onClose }: NotificationBannerProps) {
   const icons = {
     success: <IconCheck size={18} />,
     error: <IconX size={18} />,
@@ -30,10 +31,10 @@ export function NotificationBanner({ type, message, visible, onClose }: Notifica
     if (visible) {
       const timer = setTimeout(() => {
         onClose();
-      }, 4000);
+      }, extend);
       return () => clearTimeout(timer);
     }
-  }, [visible, onClose]);
+  }, [visible, onClose, extend]);
 
   return (
     <Transition
