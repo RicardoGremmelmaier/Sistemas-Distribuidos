@@ -25,6 +25,7 @@ export default function ExternalPaymentPage() {
       await axios.post('http://localhost:8084/external-payment/finalizar', {
         idTransacao: id,
         leilaoId,
+        clienteId,
         valor,
         status: novoStatus,
         dadosCliente: { clienteId },

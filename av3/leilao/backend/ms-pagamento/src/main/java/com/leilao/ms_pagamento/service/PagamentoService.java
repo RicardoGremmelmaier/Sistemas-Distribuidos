@@ -57,13 +57,14 @@ public class PagamentoService {
         }
     }
 
-    public void atualizarStatusPagamento (int leilaoId, StatusPagamento status){
+    public void atualizarStatusPagamento (int leilaoId, StatusPagamento status, int clienteId){
         EventoPagamento evento = new EventoPagamento(
             "status_pagamento",
             "Status atualizado para " + status,
             Map.of(
                     "leilaoId", leilaoId,
-                    "status", status.name()
+                    "status", status.name(),
+                    "clienteId", clienteId
             )
         );
 

@@ -17,8 +17,8 @@ public class PagamentoController {
 
     @PostMapping("/callback")
     public ResponseEntity<String> callback(@RequestBody CallbackRequest req) {
-        System.out.println("[Callback recebido] Leilão: " + req.getLeilaoId() + " | Status: " + req.getStatus());
-        pagamentoService.atualizarStatusPagamento(req.getLeilaoId(), req.getStatus());
+        System.out.println("[Callback recebido] Leilão: " + req.getLeilaoId() + " | Cliente: " + req.getClienteId() + " | Status: " + req.getStatus());
+        pagamentoService.atualizarStatusPagamento(req.getLeilaoId(), req.getStatus(), req.getClienteId());
         return ResponseEntity.ok("Status processado com sucesso");
     }
 
@@ -26,10 +26,13 @@ public class PagamentoController {
     // Classe interna apenas para simplificar o payload do callback
     public static class CallbackRequest {
         private int leilaoId;
+        private int clienteId;
         private StatusPagamento status;
 
         public int getLeilaoId() { return leilaoId; }
         public void setLeilaoId(int leilaoId) { this.leilaoId = leilaoId; }
+        public int getClienteId() { return clienteId; }
+        public void setClienteId(int clienteId) { this.clienteId = clienteId; }
         public StatusPagamento getStatus() { return status; }
         public void setStatus(StatusPagamento status) { this.status = status; }
     }
