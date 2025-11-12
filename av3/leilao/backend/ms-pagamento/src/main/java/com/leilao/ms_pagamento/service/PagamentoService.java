@@ -21,7 +21,7 @@ public class PagamentoService {
         Map<String, Object> payload = Map.of(
             "leilaoId", request.getLeilaoId(),
             "valor", request.getValor(),
-            "clienteId", Map.of("clienteId", request.getClienteId())
+            "clienteId", request.getClienteId()
         );
 
         try {

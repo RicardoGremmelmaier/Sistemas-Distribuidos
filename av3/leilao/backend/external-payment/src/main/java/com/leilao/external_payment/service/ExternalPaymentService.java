@@ -16,12 +16,15 @@ public class ExternalPaymentService {
     public Map<String, Object> createPayment(Map<String, Object> payload) {
         int leilaoId = (int) payload.get("leilaoId");
         double valor = ((Number) payload.get("valor")).doubleValue();
-        Map<?, ?> dadosCliente = (Map<?, ?>) payload.get("dadosCliente");
+        int clienteId = (int) payload.get("clienteId");
 
         String idTransacao = UUID.randomUUID().toString();
-        String linkPagamento = "http://localhost:3000/external-payment/" + idTransacao;
+        String linkPagamento = String.format(
+            "http://localhost:3000/external-payment/%s?leilaoId=%d&valor=%.2f&clienteId=%d",
+            idTransacao, leilaoId, valor, clienteId
+        );
 
-        PaymentTransaction transaction = new PaymentTransaction(idTransacao, leilaoId, valor, "PENDENTE", dadosCliente);
+        PaymentTransaction transaction = new PaymentTransaction(idTransacao, leilaoId, valor, "PENDENTE", clienteId);
         transactions.put(idTransacao, transaction);
 
         System.out.println("[MockPagamento] Transação criada: " + transaction);
@@ -47,7 +50,7 @@ public class ExternalPaymentService {
                 "leilaoId", transaction.getLeilaoId(),
                 "valor", transaction.getValor(),
                 "status", transaction.getStatus(),
-                "dadosCliente", transaction.getDadosCliente()
+                "clienteId", transaction.getClienteId()
         );
 
         System.out.println("[MockPagamento] Enviando callback: " + callbackPayload);
