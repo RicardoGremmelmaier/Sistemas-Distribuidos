@@ -5,6 +5,8 @@ import { useState } from 'react';
 import axios from 'axios';
 import { Button, Card, Title, Text, Group, Stack } from '@mantine/core';
 
+import { GradientButton } from '@/components/GradientButton';
+
 export default function ExternalPaymentPage() {
   const { id } = useParams();
   const searchParams = useSearchParams();
@@ -19,7 +21,7 @@ export default function ExternalPaymentPage() {
   const enviarCallback = async (novoStatus: 'APROVADO' | 'RECUSADO') => {
     try {
       setStatus(novoStatus);
-      await axios.post('http://localhost:8083/pagamento/callback', {
+      await axios.post('http://localhost:8084/external-payment/finalizar', {
         idTransacao: id,
         leilaoId,
         valor,
@@ -44,24 +46,27 @@ export default function ExternalPaymentPage() {
           <Text>Cliente: {clienteId}</Text>
 
           <Group mt="md">
-            <Button
-              color="green"
+            <GradientButton
+              text='Aprovar'
+              gradientType="greenToCyan"
               disabled={status !== 'PENDENTE'}
               onClick={() => enviarCallback('APROVADO')}
             >
-              Aprovar
-            </Button>
-            <Button
-              color="red"
+            </GradientButton>
+            <GradientButton
+              text='Recusar'
+              gradientType="redToOrange"
               disabled={status !== 'PENDENTE'}
               onClick={() => enviarCallback('RECUSADO')}
             >
-              Recusar
-            </Button>
+            </GradientButton>
           </Group>
 
           {msg && (
-            <Text mt="md" c={status === 'APROVADO' ? 'green' : status === 'RECUSADO' ? 'red' : 'gray'}>
+            <Text
+              mt="md"
+              c={status === 'APROVADO' ? 'green' : status === 'RECUSADO' ? 'red' : 'gray'}
+            >
               {msg}
             </Text>
           )}

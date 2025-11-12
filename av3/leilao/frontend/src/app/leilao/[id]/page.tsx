@@ -242,21 +242,15 @@ export default function LeilaoDetalhesPage() {
             Maior lance atual: R$ {maiorLance?.toFixed(2) ?? "—"}
           </Text>
           <Group grow>
-            <Button
-              variant="gradient"
-              gradient={
-                !inscrito
-                  ? { from: "green", to: "cyan", deg: 90 }
-                  : { from: "red", to: "orange", deg: 90 }
-              }
+            <GradientButton
+              text={inscrito ? "Parar notificações" : "Receber notificações"}
+              gradientType={inscrito ? "redToOrange" : "greenToCyan"}
               onClick={inscrito ? cancelarInscricao : inscrever}
-            >
-              {inscrito ? "Parar notificações" : "Receber notificações"}
-            </Button>
+            />
             <GradientButton
               text="Dar Lance"
               onClick={openModal}
-            ></GradientButton>
+            />
           </Group>
         </Stack>
       </Card>
