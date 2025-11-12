@@ -10,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.lang.Math;
 
 @RestController
 @RequestMapping("/external-payment")
@@ -25,8 +26,8 @@ public class ExternalPaymentMockController {
         double valor = ((Number) payload.get("valor")).doubleValue();
         Map<?, ?> dadosCliente = (Map<?, ?>) payload.get("dadosCliente");
 
-        String idTransacao = UUID.randomUUID().toString();
-        String fakeLink = "https://pagamento.mock.com/pay/" + idTransacao;
+        String idTransacao = Math.abs(new Random().nextInt(10000)) + "";
+        String fakeLink = "localhost:3000/external-payment/" + idTransacao;
 
         System.out.println("[MockPagamento] Nova transação criada:");
         System.out.println("  • ID Transação: " + idTransacao);
@@ -51,6 +52,7 @@ public class ExternalPaymentMockController {
             int delay = ThreadLocalRandom.current().nextInt(8000, 12000);
             Thread.sleep(delay);
 
+            // Tirar aleatório para selecionar pelo botão
             StatusPagamento status = ThreadLocalRandom.current().nextBoolean()
                     ? StatusPagamento.APROVADO
                     : StatusPagamento.RECUSADO;
