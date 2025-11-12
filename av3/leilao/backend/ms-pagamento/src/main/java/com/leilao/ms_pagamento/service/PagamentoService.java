@@ -26,7 +26,7 @@ public class PagamentoService {
 
         try {
                 ResponseEntity<Map> res = restTemplate.postForEntity(
-                        "http://localhost:8083/external-payment/create",
+                        "http://localhost:8084/external-payment/create",
                         payload,
                         Map.class
                 );
