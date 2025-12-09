@@ -1,9 +1,9 @@
 syntax = "proto3";
 
-package com.grpc.ms_leilao;
+package com.proto.leilao;
 
 option java_multiple_files = true;
-option java_package = "com.grpc.ms_leilao";
+option java_package = "com.proto.grpc.leilao"; // Pacote Java que será gerado
 
 service LeilaoService {
     // Gateway chama para criar

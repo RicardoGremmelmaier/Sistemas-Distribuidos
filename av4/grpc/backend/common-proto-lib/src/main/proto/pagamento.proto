@@ -1,9 +1,9 @@
 syntax = "proto3";
 
-package com.grpc.ms_pagamento;
+package com.proto.pagamento; 
 
 option java_multiple_files = true;
-option java_package = "com.grpc.ms_pagamento";
+option java_package = "com.proto.grpc.pagamento"; // Pacote Java que será gerado
 
 service PagamentoService {
     // Cria link de pagamento (Leilão chama quando acha vencedor)

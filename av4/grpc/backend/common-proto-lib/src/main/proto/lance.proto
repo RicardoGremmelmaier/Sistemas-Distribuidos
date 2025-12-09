@@ -1,9 +1,9 @@
 syntax = "proto3";
 
-package com.grpc.ms_lance; // Pacote Java que será gerado
+package com.proto.lance; 
 
 option java_multiple_files = true;
-option java_package = "com.grpc.ms_lance";
+option java_package = "com.proto.grpc.lance"; // Pacote Java que será gerado
 
 service LanceService {
     // Valida e processa um lance (Gateway chama)

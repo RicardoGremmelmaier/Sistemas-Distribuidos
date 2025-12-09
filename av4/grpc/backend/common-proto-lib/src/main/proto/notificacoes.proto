@@ -1,9 +1,9 @@
 syntax = "proto3";
 
-package com.grpc.api_gateway;
+package com.proto.notificacoes; 
 
 option java_multiple_files = true;
-option java_package = "com.grpc.api_gateway";
+option java_package = "com.proto.grpc.notificacoes"; // Pacote Java que será gerado
 
 service NotificacaoService {
     // Ms-Lance, Ms-Leilao e Ms-Pagamento chamam para avisar o Gateway
