@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package com.grpc.api_gateway;
+
+option java_multiple_files = true;
+option java_package = "com.grpc.api_gateway";
+
+service NotificacaoService {
+    // Ms-Lance, Ms-Leilao e Ms-Pagamento chamam para avisar o Gateway
+    rpc EnviarNotificacao (EventoNotificacao) returns (Empty);
+}
+
+message Empty {}
+
+message EventoNotificacao {
+    string tipo = 1;       // ex: "lance_validado", "leilao_vencedor"
+    string mensagem = 2;  
+    string dados_json = 3; // JSON para facilitar o repasse ao SSE
+    int32 leilao_id = 4;
+    int32 cliente_id = 5;  // 0 se for broadcast
+}

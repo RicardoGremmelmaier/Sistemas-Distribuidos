@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package com.grpc.ms_leilao;
+
+option java_multiple_files = true;
+option java_package = "com.grpc.ms_leilao";
+
+service LeilaoService {
+    // Gateway chama para criar
+    rpc CriarLeilao (CriarLeilaoRequest) returns (LeilaoDto);
+    // Gateway chama para listar
+    rpc ListarLeiloes (Empty) returns (ListaLeiloes);
+    // Gateway ou Lance chamam para ver detalhes
+    rpc BuscarLeilao (LeilaoIdRequest) returns (LeilaoDto);
+}
+
+message Empty {}
+message LeilaoIdRequest { int32 id = 1; }
+
+message CriarLeilaoRequest {
+    string nome_produto = 1;
+    double lance_inicial = 2;
+    string data_inicio = 3; // Formato ISO-8601 string
+    string data_fim = 4;
+}
+
+message LeilaoDto {
+    int32 id = 1;
+    string nome_produto = 2;
+    string status = 3;
+    string data_inicio = 4;
+    string data_fim = 5;
+    double lance_inicial = 6;
+}
+
+message ListaLeiloes { repeated LeilaoDto leiloes = 1; }

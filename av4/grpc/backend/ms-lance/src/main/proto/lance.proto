@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package com.grpc.ms_lance; // Pacote Java que será gerado
+
+option java_multiple_files = true;
+option java_package = "com.grpc.ms_lance";
+
+service LanceService {
+    // Valida e processa um lance (Gateway chama)
+    rpc ProcessarLance (LanceRequest) returns (LanceResponse);
+    
+    // Retorna quem venceu (Leilão chama no final)
+    rpc ObterVencedor (LeilaoIdRequest) returns (VencedorResponse);
+    
+    // Atualiza cache de status (Leilão chama ao iniciar/finalizar)
+    rpc FinalizarLeilao (LeilaoIdRequest) returns (Empty); 
+}
+
+message Empty {}
+
+message LeilaoIdRequest { int32 id = 1; }
+
+message LanceRequest {
+    int32 leilao_id = 1;
+    int32 cliente_id = 2;
+    double valor = 3;
+}
+
+message LanceResponse {
+    bool valido = 1;
+    string motivo = 2;
+}
+
+message VencedorResponse {
+    bool tem_vencedor = 1;
+    int32 cliente_id = 2;
+    double valor = 3;
+}
