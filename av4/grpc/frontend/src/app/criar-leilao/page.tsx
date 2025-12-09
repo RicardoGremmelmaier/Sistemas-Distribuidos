@@ -1,0 +1,153 @@
+'use client';
+
+import { useState } from 'react';
+import { TextInput, NumberInput, Textarea, Card, Title, Group } from '@mantine/core';
+import { DateTimePicker } from '@mantine/dates';
+import { GradientButton } from '@/components/GradientButton';
+import { NotificationBanner } from '@/components/NotificationBanner';
+
+import axios from 'axios';
+import dayjs from 'dayjs';
+
+export default function CriarLeilaoPage() {
+  const [formData, setFormData] = useState({
+    nomeDoProduto: '',
+    descricao: '',
+    lanceInicial: 0,
+    dataInicio: new Date(),
+    dataFim: new Date(),
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [notification, setNotification] = useState<{
+    type: 'success' | 'error' | 'warning' | 'info';
+    message: string;
+    visible: boolean;
+  }>({ type: 'info', message: '', visible: false });
+
+  const handleChange = (field: string, value: any) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleCloseNotification = () =>
+    setNotification((prev) => ({ ...prev, visible: false }));
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setNotification((prev) => ({ ...prev, visible: false }));
+
+    const payload = {
+      nomeDoProduto: formData.nomeDoProduto,
+      descricao: formData.descricao,
+      lanceInicial: formData.lanceInicial,
+      dataInicio: dayjs(formData.dataInicio).format('YYYY-MM-DDTHH:mm:ss'),
+      dataFim: dayjs(formData.dataFim).format('YYYY-MM-DDTHH:mm:ss'),
+    };
+
+    try {
+      await axios.post('http://localhost:8080/leiloes', payload);
+
+      setNotification({
+        type: 'success',
+        message: 'Leilão criado com sucesso!',
+        visible: true,
+      });
+
+      setFormData({
+        nomeDoProduto: '',
+        descricao: '',
+        lanceInicial: 0,
+        dataInicio: new Date(),
+        dataFim: new Date(),
+      });
+    } catch (error: any) {
+      console.error('Erro ao criar leilão:', error);
+      setNotification({
+        type: 'error',
+        message:
+          error.response?.data?.message ||
+          'Falha ao criar o leilão. Verifique os dados e tente novamente.',
+        visible: true,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <NotificationBanner
+        type={notification.type}
+        message={notification.message}
+        visible={notification.visible}
+        onClose={handleCloseNotification}
+      />
+
+      <div className="flex justify-center items-center w-full mt-10">
+        <Card shadow="sm" radius="md" withBorder className="w-[600px]">
+          <Title order={3} mb="md">
+            Criar novo Leilão
+          </Title>
+
+          <form onSubmit={handleSubmit}>
+            <TextInput
+              label="Nome do Produto"
+              placeholder="Ex: PlayStation 5"
+              value={formData.nomeDoProduto}
+              onChange={(e) => handleChange('nomeDoProduto', e.currentTarget.value)}
+              required
+              mb="sm"
+            />
+
+            <Textarea
+              label="Descrição"
+              placeholder="Ex: Edição digital, novo, com garantia..."
+              value={formData.descricao}
+              onChange={(e) => handleChange('descricao', e.currentTarget.value)}
+              minRows={3}
+              mb="sm"
+            />
+
+            <NumberInput
+              label="Valor inicial (R$)"
+              prefix="R$ "
+              value={formData.lanceInicial}
+              onChange={(v) => handleChange('lanceInicial', v || 0)}
+              min={0}
+              decimalScale={2}
+              fixedDecimalScale
+              thousandSeparator=" "
+              allowNegative={false}
+              mb="sm"
+              required
+            />
+
+            <Group grow mb="sm">
+              <DateTimePicker
+                dropdownType="modal"
+                label="Data de início"
+                value={formData.dataInicio}
+                onChange={(v) => handleChange('dataInicio', v)}
+                required
+              />
+              <DateTimePicker
+                dropdownType="modal"
+                label="Data de fim"
+                value={formData.dataFim}
+                onChange={(v) => handleChange('dataFim', v)}
+                required
+              />
+            </Group>
+
+            <GradientButton
+              text={loading ? 'Criando...' : 'Criar Leilão'}
+              type="submit"
+              disabled={loading}
+            />
+          </form>
+        </Card>
+      </div>
+    </>
+  );
+}
