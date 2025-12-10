@@ -2,9 +2,9 @@ package com.grpc.api_gateway.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.grpc.api_gateway.model.Evento;
-import com.leilao.common.grpc.gateway.Empty;
-import com.leilao.common.grpc.gateway.EventoNotificacao;
-import com.leilao.common.grpc.gateway.NotificacaoServiceGrpc;
+import com.leilao.common.grpc.notificacoes.Empty;
+import com.leilao.common.grpc.notificacoes.EventoNotificacao;
+import com.leilao.common.grpc.notificacoes.NotificacaoServiceGrpc;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;

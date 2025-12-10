@@ -1,7 +1,7 @@
 package com.grpc.ms_lance.service;
 
-import com.leilao.common.grpc.gateway.EventoNotificacao;
-import com.leilao.common.grpc.gateway.NotificacaoServiceGrpc;
+import com.leilao.common.grpc.notificacoes.EventoNotificacao;
+import com.leilao.common.grpc.notificacoes.NotificacaoServiceGrpc;
 import com.leilao.common.grpc.lance.*;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.client.inject.GrpcClient;

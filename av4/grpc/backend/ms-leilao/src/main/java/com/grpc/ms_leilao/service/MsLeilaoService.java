@@ -1,7 +1,7 @@
 package com.grpc.ms_leilao.service;
 
-import com.leilao.common.grpc.gateway.EventoNotificacao;
-import com.leilao.common.grpc.gateway.NotificacaoServiceGrpc;
+import com.leilao.common.grpc.notificacoes.EventoNotificacao;
+import com.leilao.common.grpc.notificacoes.NotificacaoServiceGrpc;
 import com.leilao.common.grpc.lance.*;
 import com.leilao.common.grpc.pagamento.PagamentoRequestProto;
 import com.leilao.common.grpc.pagamento.PagamentoResponseProto;
