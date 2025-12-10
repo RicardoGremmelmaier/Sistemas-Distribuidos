@@ -8,6 +8,8 @@ import net.devh.boot.grpc.client.inject.GrpcClient;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Locale;
+
 @GrpcService 
 public class GrpcLanceService extends LanceServiceGrpc.LanceServiceImplBase {
 
@@ -39,7 +41,7 @@ public class GrpcLanceService extends LanceServiceGrpc.LanceServiceImplBase {
         if (aceito) {
             try {
                 // Monta um JSON simples na mão para o front
-                String jsonDados = String.format("{\"leilaoId\": %d, \"valor\": %.2f, \"clienteId\": %d}", 
+                String jsonDados = String.format(Locale.US, "{\"leilaoId\": %d, \"valor\": %.2f, \"clienteId\": %d}", 
                         request.getLeilaoId(), request.getValor(), request.getClienteId());
 
                 gatewayStub.enviarNotificacao(EventoNotificacao.newBuilder()

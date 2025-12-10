@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import java.util.Locale;
+
 @Service
 public class MsLeilaoService {
 
@@ -100,7 +102,7 @@ public class MsLeilaoService {
                     
                     // Notifica Gateway sobre o vencedor
                     notificarGateway("leilao_vencedor", leilao.getId(),
-                        String.format("{\"leilaoId\": %d, \"clienteId\": %d, \"valor\": %.2f}", 
+                        String.format(Locale.US,"{\"leilaoId\": %d, \"clienteId\": %d, \"valor\": %.2f}", 
                         leilao.getId(), vencedor.getClienteId(), vencedor.getValor()));
 
                     // Solicita Link de Pagamento ao MS Pagamento
