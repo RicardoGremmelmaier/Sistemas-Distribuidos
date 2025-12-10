@@ -114,7 +114,7 @@ public class MsLeilaoService {
                     // Notifica o Link
                     notificarGateway("link_pagamento", leilao.getId(),
                             String.format("{\"leilaoId\": %d, \"link\": \"%s\", \"clienteId\": %d}",
-                            leilao.getId(), pagto.getLink(), vencedor.getClienteId()), 
+                            leilao.getId(), pagto.getLinkPagamento(), vencedor.getClienteId()), 
                             vencedor.getClienteId()); // Mensagem privada para o vencedor
                 } else {
                     notificarGateway("leilao_finalizado", leilao.getId(), 
