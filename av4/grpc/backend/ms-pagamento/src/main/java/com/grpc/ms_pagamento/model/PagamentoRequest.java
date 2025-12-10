@@ -1,4 +1,4 @@
-package com.leilao.ms_pagamento.model;
+package com.grpc.ms_pagamento.model;
 
 public class PagamentoRequest {
     private int leilaoId;

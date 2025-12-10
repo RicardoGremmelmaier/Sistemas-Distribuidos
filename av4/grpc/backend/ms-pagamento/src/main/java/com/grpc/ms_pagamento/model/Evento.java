@@ -1,4 +1,4 @@
-package com.leilao.ms_pagamento.model;
+package com.grpc.ms_pagamento.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
