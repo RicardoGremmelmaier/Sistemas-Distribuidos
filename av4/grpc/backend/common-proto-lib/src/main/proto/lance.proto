@@ -12,11 +12,20 @@ service LanceService {
     // Retorna quem venceu (Leilão chama no final)
     rpc ObterVencedor (LeilaoIdRequest) returns (VencedorResponse);
     
-    // Atualiza cache de status (Leilão chama ao iniciar/finalizar)
+    // Inicia o leilão no cache do Lance (Leilão chama no inicio)
+    rpc IniciarLeilao (LeilaoDados) returns (Empty);
+    
+    // Atualiza cache de status (Leilão chama ao finalizar)
     rpc FinalizarLeilao (LeilaoIdRequest) returns (Empty); 
+
 }
 
 message Empty {}
+
+message LeilaoDados {
+    int32 id = 1;
+    string status = 2;
+}
 
 message LeilaoIdRequest { int32 id = 1; }
 
