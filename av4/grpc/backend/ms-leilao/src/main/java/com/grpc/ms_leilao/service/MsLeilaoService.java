@@ -89,23 +89,37 @@ public class MsLeilaoService {
             leilao.setStatus(LeilaoStatus.FINALIZADO);
             System.out.println("Finalizando leilão " + leilao.getId());
 
-            // Avisa o MS Lance para travar novos lances
             try {
                 lanceStub.finalizarLeilao(LeilaoIdRequest.newBuilder().setId(leilao.getId()).build());
-                
-                // Obtem vencedor
+
                 VencedorResponse vencedor = lanceStub.obterVencedor(
                         LeilaoIdRequest.newBuilder().setId(leilao.getId()).build());
 
                 if (vencedor.getTemVencedor()) {
                     leilao.setIdVencedor(vencedor.getClienteId());
-                    
-                    // Notifica Gateway sobre o vencedor
-                    notificarGateway("leilao_vencedor", leilao.getId(),
-                        String.format(Locale.US,"{\"leilaoId\": %d, \"clienteId\": %d, \"valor\": %.2f}", 
-                        leilao.getId(), vencedor.getClienteId(), vencedor.getValor()));
 
-                    // Solicita Link de Pagamento ao MS Pagamento
+                    // --- PASSO A: Notificação Geral (Broadcast) ---
+                    // Avisa TODOS que acabou e quem foi o vencedor
+                    String jsonFinalizado = String.format(Locale.US, 
+                        "{\"leilaoId\": %d, \"status\": \"FINALIZADO\", \"vencedorId\": %d, \"valorFinal\": %.2f}",
+                        leilao.getId(), vencedor.getClienteId(), vencedor.getValor());
+                    
+                    // Sem passar clienteId = Broadcast
+                    notificarGateway("leilao_finalizado", leilao.getId(), jsonFinalizado);
+
+
+                    // --- PASSO B: Notificação Exclusiva do Vencedor (Privada) ---
+                    // Avisa somente o vencedor
+                    String jsonVencedor = String.format(Locale.US, 
+                        "{\"leilaoId\": %d, \"mensagem\": \"Você venceu!\", \"valor\": %.2f}",
+                        leilao.getId(), vencedor.getValor());
+
+                    // Passando clienteId = Mensagem Privada
+                    notificarGateway("leilao_vencedor", leilao.getId(), jsonVencedor, vencedor.getClienteId());
+
+
+                    // --- PASSO C: Link de Pagamento (Privada) ---
+                    // Solicita Link ao MS Pagamento
                     PagamentoResponseProto pagto = pagamentoStub.solicitarPagamento(
                             PagamentoRequestProto.newBuilder()
                                     .setLeilaoId(leilao.getId())
@@ -113,14 +127,16 @@ public class MsLeilaoService {
                                     .setValor(vencedor.getValor())
                                     .build());
 
-                    // Notifica o Link
-                    notificarGateway("link_pagamento", leilao.getId(),
-                            String.format("{\"leilaoId\": %d, \"link\": \"%s\", \"clienteId\": %d}",
-                            leilao.getId(), pagto.getLinkPagamento(), vencedor.getClienteId()), 
-                            vencedor.getClienteId()); // Mensagem privada para o vencedor
+                    String jsonLink = String.format("{\"leilaoId\": %d, \"link\": \"%s\"}",
+                            leilao.getId(), pagto.getLinkPagamento());
+
+                    // Passando clienteId = Mensagem Privada
+                    notificarGateway("link_pagamento", leilao.getId(), jsonLink, vencedor.getClienteId());
+
                 } else {
+                    // Sem vencedor (Broadcast)
                     notificarGateway("leilao_finalizado", leilao.getId(), 
-                            "{\"mensagem\": \"Sem vencedores\"}");
+                            "{\"mensagem\": \"Leilão finalizado sem lances\"}");
                 }
 
             } catch (Exception e) {
@@ -129,7 +145,6 @@ public class MsLeilaoService {
             }
         }
     }
-
     // Auxiliar para enviar notificação (Broadcast)
     private void notificarGateway(String tipo, int leilaoId, String json) {
         notificarGateway(tipo, leilaoId, json, 0);
