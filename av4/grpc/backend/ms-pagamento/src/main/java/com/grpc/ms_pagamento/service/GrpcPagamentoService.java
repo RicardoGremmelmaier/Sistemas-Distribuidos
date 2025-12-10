@@ -28,7 +28,7 @@ public class GrpcPagamentoService extends PagamentoServiceGrpc.PagamentoServiceI
 
         // Devolve a resposta via gRPC para o ms-leilao
         PagamentoResponseProto responseProto = PagamentoResponseProto.newBuilder()
-                .setLink(modelResponse.getLinkPagamento())
+                .setLinkPagamento(modelResponse.getLinkPagamento())
                 .setStatus(modelResponse.getStatus().name())
                 .build();
 
