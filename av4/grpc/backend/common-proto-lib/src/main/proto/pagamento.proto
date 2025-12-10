@@ -7,16 +7,16 @@ option java_package = "com.leilao.common.grpc.pagamento"; // Pacote Java que ser
 
 service PagamentoService {
     // Cria link de pagamento (Leilão chama quando acha vencedor)
-    rpc SolicitarPagamento (PagamentoRequest) returns (PagamentoResponse);
+    rpc SolicitarPagamento (PagamentoRequestProto) returns (PagamentoResponseProto);
 }
 
-message PagamentoRequest {
+message PagamentoRequestProto {
     int32 leilao_id = 1;
     int32 cliente_id = 2;
     double valor = 3;
 }
 
-message PagamentoResponse {
+message PagamentoResponseProto {
     string link_pagamento = 1;
     string status = 2;
 }
