@@ -5,6 +5,7 @@ import com.leilao.common.grpc.leilao.*;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +49,15 @@ public class LeilaoService {
         l.setLeilaoId(dto.getId());
         l.setNomeDoProduto(dto.getNomeProduto());
         l.setLanceInicial(dto.getLanceInicial());
+        
+        // Converte a String do gRPC de volta para LocalDateTime
+        if (dto.getDataInicio() != null && !dto.getDataInicio().isEmpty()) {
+            l.setDataInicio(LocalDateTime.parse(dto.getDataInicio()));
+        }
+        if (dto.getDataFim() != null && !dto.getDataFim().isEmpty()) {
+            l.setDataFim(LocalDateTime.parse(dto.getDataFim()));
+        }
+        
         return l;
     }
 }

@@ -6,7 +6,7 @@ import { Title, Card, Text, Stack } from '@mantine/core';
 
 import { GradientButton } from './GradientButton';
 interface Leilao {
-  id: number;
+  leilaoId: number;
   nomeDoProduto: string;
   descricao: string;
   lanceInicial: number;
@@ -41,7 +41,7 @@ export function LeilaoCard({ leilao }: { leilao: Leilao }) {
           Fim: {new Date(leilao.dataFim).toLocaleString('pt-BR')}
         </Text>
 
-        <GradientButton text='Ver detalhes' onClick={() => router.push(`/leilao/${leilao.id}`)}/>
+        <GradientButton text='Ver detalhes' onClick={() => router.push(`/leilao/${leilao.leilaoId}`)}/>
       </Stack>
     </Card>
   );
