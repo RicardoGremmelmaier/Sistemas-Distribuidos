@@ -6,6 +6,7 @@ public class Leilao {
     private Integer leilaoId;
     private String nomeDoProduto;
     private String descricao;
+    private String status;
     private Double lanceInicial;
     private LocalDateTime dataInicio;
     private LocalDateTime dataFim;
@@ -20,6 +21,9 @@ public class Leilao {
 
     public String getDescricao() { return descricao; }
     public void setDescricao(String descricao) { this.descricao = descricao; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
     public Double getLanceInicial() { return lanceInicial; }
     public void setLanceInicial(Double lanceInicial) { this.lanceInicial = lanceInicial; }

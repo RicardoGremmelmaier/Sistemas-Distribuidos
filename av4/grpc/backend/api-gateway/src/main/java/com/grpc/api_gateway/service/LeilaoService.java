@@ -47,6 +47,7 @@ public class LeilaoService {
     private Leilao mapDtoToModel(LeilaoDto dto) {
         Leilao l = new Leilao();
         l.setLeilaoId(dto.getId());
+        l.setStatus(dto.getStatus());
         l.setNomeDoProduto(dto.getNomeProduto());
         l.setLanceInicial(dto.getLanceInicial());
         
