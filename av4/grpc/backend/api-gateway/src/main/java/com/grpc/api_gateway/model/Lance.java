@@ -1,4 +1,4 @@
-package com.leilao.api_gateway.model;
+package com.grpc.api_gateway.model;
 
 public class Lance {
     private Integer leilaoId;

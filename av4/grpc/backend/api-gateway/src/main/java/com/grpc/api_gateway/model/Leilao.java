@@ -1,4 +1,4 @@
-package com.leilao.api_gateway.model;
+package com.grpc.api_gateway.model;
 
 import java.time.LocalDateTime;
 

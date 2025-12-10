@@ -1,7 +1,7 @@
 package com.grpc.api_gateway.service;
 
 import com.grpc.api_gateway.model.Lance;
-import com.grpc.common.grpc.lance.*;
+import com.leilao.common.grpc.lance.*;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.stereotype.Service;
 
